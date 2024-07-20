@@ -1,16 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parser_errors.h                                    :+:      :+:    :+:   */
+/*   philosopher.h                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/07/04 16:40:27 by zanikin           #+#    #+#             */
-/*   Updated: 2024/07/06 00:52:17 by zanikin          ###   ########.fr       */
+/*   Created: 2024/07/05 08:15:21 by zanikin           #+#    #+#             */
+/*   Updated: 2024/07/20 08:43:59 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PARSER_ERRORS_H
-# define PARSER_ERRORS_H
+#ifndef PHILOSOPHER_H
+# define PHILOSOPHER_H
+# include "config.h"
 
+int		awake_philosophers(t_conf *conf);
 #endif
