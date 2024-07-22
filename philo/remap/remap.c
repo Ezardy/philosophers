@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/18 06:37:22 by zanikin           #+#    #+#             */
-/*   Updated: 2024/07/19 05:20:08 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/07/22 01:13:48 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ int	thr_join(pthread_t t, int *error)
 	int	err;
 
 	if (!*error)
-		err = pthread_join(t, error) != 0 * PHILOSOPHER_ERR_DL;
+		err = pthread_join(t, (void *)error) != 0 * PHILOSOPHER_ERR_DL;
 	else
 		err = 0;
 	if (err)

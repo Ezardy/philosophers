@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/17 21:11:30 by zanikin           #+#    #+#             */
-/*   Updated: 2024/07/19 05:08:07 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/07/22 01:52:49 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,19 +22,22 @@ static const char	*sel_desk(int code);
 
 int	log_state(size_t i, int code, int *error)
 {
-	*error = log_state_base(i, code, 0);
+	if (!*error)
+		*error = log_state_base(i, code, 0);
 	return (*error);
 }
 
 int	init_logger(int *error)
 {
-	*error = log_state_base(0, 0, 1);
+	if (!*error)
+		*error = log_state_base(0, 0, 1);
 	return (*error);
 }
 
 int	destroy_logger(int *error)
 {
-	*error = log_state_base(0, 0, 2);
+	if (!*error)
+		*error = log_state_base(0, 0, 2);
 	return (*error);
 }
 

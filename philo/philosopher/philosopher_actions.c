@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/20 08:20:55 by zanikin           #+#    #+#             */
-/*   Updated: 2024/07/20 08:23:33 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/07/22 01:08:02 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,10 @@
 #include <unistd.h>
 
 #include "logger/state_codes.h"
-#include "t_philo.h"
 #include "logger/error_codes.h"
+#include "logger/logger.h"
+#include "t_philo.h"
+#include "remap/remap.h"
 
 int	eat(t_philo *philo, int *error)
 {
@@ -33,7 +35,7 @@ int	eat(t_philo *philo, int *error)
 	return (*error || philo->ate >= philo->conf->notepme);
 }
 
-int	sleep(useconds_t ts, size_t i, int *error)
+int	phsleep(useconds_t ts, size_t i, int *error)
 {
 	if (!log_state(i, LOG_SLEEP, error))
 		usleep((useconds_t)(ts * 1000));
@@ -55,4 +57,5 @@ int	think(t_philo *philo, suseconds_t t, int *error)
 		philo->teo = philo->teo + philo->conf->ts + (rem > 0) * rem;
 		philo->tee = philo->teo + philo->conf->te;
 	}
+	return (*error);
 }

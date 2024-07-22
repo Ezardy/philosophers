@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/05 00:51:02 by zanikin           #+#    #+#             */
-/*   Updated: 2024/07/19 05:20:08 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/07/22 00:49:54 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ static void	print_logger_error(int error)
 	else if (error == LOGGER_ERR_MUT_BUSY)
 		str = LOGGER_ERR_MUT_BUSY_DESK;
 	else
-		str = LOGGER_ERR_MEM_ALLOC;
+		str = LOGGER_ERR_MEM_ALLOC_DESK;
 	printf("logger: %s\n", str);
 }
 
@@ -54,9 +54,9 @@ static void	print_philosopher_error(int error)
 	if (error == PHILOSOPHER_ERR_MEM_ALLOC)
 		str = PHILOSOPHER_ERR_MEM_ALLOC_DESK;
 	else if (error == PHILOSOPHER_ERR_DL)
-		str = PHILOSOPHER_ERR_DEAD_LOCK_DESK;
+		str = PHILOSOPHER_ERR_DL_DESK;
 	else if (error == PHILOSOPHER_ERR_MUT_DL)
-		str = PHILOSOPHER_ERR_MUT_DEAD_LOCK_DESK;
+		str = PHILOSOPHER_ERR_MUT_DL_DESK;
 	else
 		str = PHILOSOPHER_ERR_MUT_BUSY_DESK;
 	printf("philosopher: %s\n", str);
@@ -81,6 +81,7 @@ static void	print_main_error(int error)
 {
 	const char	*str;
 
+	(void)error;
 	str = MAIN_ERR_ARG_COUNT_DESC;
 	printf("main: %s\n", str);
 }

@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/06 01:37:47 by zanikin           #+#    #+#             */
-/*   Updated: 2024/07/20 08:44:35 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/07/22 01:24:51 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,13 +18,13 @@
 #include "config.h"
 #include "t_philo.h"
 
-void		dest_philosopher_func(void);
-int			init_philosopher_func(void);
-void		*philosopher(t_philo *philo);
+int			dest_philosopher_func(int *error);
+int			init_philosopher_func(int *error);
+void		*philosopher(void *philo);
 
 static int	run_threads(pthread_t *phs, pthread_mutex_t *fms,
 				const t_conf *conf);
-static int	run_threads_loop(const t_philosophers *philos, pthread_t *phs);
+static int	run_threads_loop(t_philosophers *philos, pthread_t *phs);
 static void	set_philo(t_philosophers *philos, size_t i, size_t l, size_t r);
 
 int	awake_philosophers(t_conf *conf)
@@ -32,14 +32,16 @@ int	awake_philosophers(t_conf *conf)
 	int				error;
 	pthread_t		*phs;
 	pthread_mutex_t	*fms;
-	size_t			i;
 
 	phs = (pthread_t *)malloc(sizeof(pthread_t) * conf->nop);
 	fms = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t) * conf->nop);
 	error = (phs == NULL || fms == NULL)
 		* PHILOSOPHER_ERR_MEM_ALLOC;
-	if (!error)
-		error = run_threads(phs, fms, conf->nop);
+	if (!init_philosopher_func(&error))
+	{
+		error = run_threads(phs, fms, conf);
+		dest_philosopher_func(&error);
+	}
 	free(fms);
 	free(phs);
 	return (error);
@@ -72,7 +74,7 @@ static int	run_threads(pthread_t *phs, pthread_mutex_t *fms,
 	return (err);
 }
 
-static int	run_threads_loop(const t_philosophers *philos, pthread_t *phs)
+static int	run_threads_loop(t_philosophers *philos, pthread_t *phs)
 {
 	int				error;
 	size_t			i;
@@ -86,11 +88,11 @@ static int	run_threads_loop(const t_philosophers *philos, pthread_t *phs)
 		philos->philos[i].teo = tp.tv_usec;
 		philos->philos[i].tee = tp.tv_usec + philos->conf->te;
 		if (i && i < philos->conf->nop - 1)
-			set_philo(&philos, i, i - 1, i + 1);
+			set_philo(philos, i, i - 1, i + 1);
 		else if (!i)
-			set_philo(&philos, 0, philos->conf->nop - 1, 0);
+			set_philo(philos, 0, philos->conf->nop - 1, 0);
 		else
-			set_philo(&philos, philos->conf->nop - 1, philos->conf->nop - 1, 0);
+			set_philo(philos, philos->conf->nop - 1, philos->conf->nop - 1, 0);
 		thr_crea(phs + i, philosopher, philos->philos + i, &error);
 		i++;
 	}

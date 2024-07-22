@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 05:23:53 by zanikin           #+#    #+#             */
-/*   Updated: 2024/07/20 08:44:52 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/07/22 01:26:37 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,25 +19,30 @@
 #include "remap/remap.h"
 
 int			eat(t_philo *philo, int *error);
-int			sleep(useconds_t ts, size_t i, int *error);
+int			phsleep(useconds_t ts, size_t i, int *error);
 int			think(t_philo *philo, suseconds_t t, int *error);
 
+static void	*philosopher_base(t_philo *philo, int mode);
 static void	logic(t_philo *philo, int *error, int *g_state,
 				pthread_mutex_t *sm);
 
-void	*philosopher(t_philo *philo)
+void	*philosopher(void *philo)
 {
-	return (philosopher_base(philo, 0));
+	return ((void *)philosopher_base((t_philo *)philo, 0));
 }
 
-int	init_philosopher_func(void)
+int	init_philosopher_func(int *error)
 {
-	return ((int)philosopher_base(NULL, 1));
+	if (!*error)
+		*error = (int)philosopher_base(NULL, 1);
+	return (*error);
 }
 
-void	dest_philosopher_func(void)
+int	dest_philosopher_func(int *error)
 {
-	philosopher_base(NULL, 2);
+	if (!*error)
+		*error = (int)philosopher_base(NULL, 2);
+	return (*error);
 }
 
 static void	*philosopher_base(t_philo *philo, int mode)
@@ -65,7 +70,7 @@ static void	*philosopher_base(t_philo *philo, int mode)
 		if (!error && philo->ate >= philo->conf->notepme)
 			error = EAT_ENOUGH;
 	}
-	return ((void *)error);
+	return ((void *)(long)error);
 }
 
 static void	logic(t_philo *philo, int *error, int *g_state, pthread_mutex_t *sm)
@@ -74,12 +79,14 @@ static void	logic(t_philo *philo, int *error, int *g_state, pthread_mutex_t *sm)
 	{
 		pthread_mutex_unlock(sm);
 		if (philo->i % 2)
-			if (!(eat(philo, error) || sleep(philo->conf->ts,
+		{
+			if (!(eat(philo, error) || phsleep(philo->conf->ts,
 						philo->id, error)))
 				think(philo, philo->teo, error);
+		}
 		else
 			if (!(think(philo, philo->tee, error) || eat(philo, error)))
-				sleep(philo->conf->ts, philo->id, error);
+				phsleep(philo->conf->ts, philo->id, error);
 		philo->i = (philo->i + 1) % philo->conf->nop;
 		if (*error && !mut_lock(sm, PHILOSOPHER_ERR_MUT_DL, error))
 		{
