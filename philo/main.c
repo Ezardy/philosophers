@@ -6,37 +6,51 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/05 01:04:30 by zanikin           #+#    #+#             */
-/*   Updated: 2024/07/22 01:24:34 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/07/23 23:15:22 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+#include <limits.h>
 
 #include "logger/error_codes.h"
 #include "logger/logger.h"
 #include "parser/parser.h"
 #include "philosopher/philosopher.h"
 
-int	main(int argc, const char **argv)
+static void	ms_to_us(t_conf *conf);
+
+int	main(const int argc, const char **argv)
 {
-	int			i;
-	int			error;
-	t_config	conf;
+	int				i;
+	int				error;
+	t_config		conf;
 
 	error = (argc < 5 || argc > 6) * MAIN_ERR_ARG_COUNT;
 	if (!error)
 	{
 		i = 1;
-		conf.conf.swd = argc == 5;
-		while (!error && i < argc)
-		{
-			error = read_ulong(argv[i], &conf.conf_arr.arr[i]);
-			i++;
-		}
+		conf.conf.ewf = argc == 6;
+		while (!error && i++ < 4)
+			error = read_uint_limit(argv[i], conf.conf_arr.iarr + (i - 2),
+					UINT_MAX / 1000);
+		while (!error && i++ < 6 + (argc == 6))
+			error = read_ulong(argv[(i - 6) * 4 + 1],
+					conf.conf_arr.larr + (i - 6));
 	}
-	if (!init_logger(&error) && conf.conf.nop)
+	if (!init_logger(&error))
 	{
-		error = awake_philosophers(&conf.conf);
+		ms_to_us(&conf.conf);
+		if (conf.conf.nop)
+			error = awake_philosophers(&conf.conf);
 		destroy_logger(&error);
 	}
 	print_error(error);
 	return (error);
+}
+
+static void	ms_to_us(t_conf *conf)
+{
+	conf->td *= 1000;
+	conf->te *= 1000;
+	conf->ts *= 1000;
 }

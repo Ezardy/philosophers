@@ -57,7 +57,7 @@ $(philosopher_dir): | $(BUILD_DIR)
 #        (__\_)(____)\_)(_/\_/\_/(__)  
 
 remap_dir=$(BUILD_DIR)/remap
-remap_modules=remap
+remap_modules=pthread time
 remap_obj=$(addprefix $(remap_dir)/, $(addsuffix .o, $(remap_modules)))
 $(remap_dir): | $(BUILD_DIR)
 	mkdir $@

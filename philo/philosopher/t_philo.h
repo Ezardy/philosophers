@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/06 02:21:37 by zanikin           #+#    #+#             */
-/*   Updated: 2024/07/20 08:27:17 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/07/23 23:19:18 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,14 +24,14 @@ typedef struct s_philo
 	const t_conf	*conf;
 	size_t			i;
 	size_t			id;
-	suseconds_t		tee;
-	suseconds_t		teo;
+	size_t			tee;
+	size_t			teo;
+	size_t			ttd;
 	size_t			ate;
 }	t_philo;
 
 typedef struct s_philosophers
 {
-	int				sdied;
 	int				*fs;
 	t_philo			*philos;
 	const t_conf	*conf;

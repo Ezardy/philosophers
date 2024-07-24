@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/17 21:11:30 by zanikin           #+#    #+#             */
-/*   Updated: 2024/07/22 01:52:49 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/07/23 21:51:31 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 
 #include "state_codes.h"
 #include "error_codes.h"
+#include "remap/remap.h"
 
 static int			log_state_base(size_t i, int code, int mode);
 static const char	*sel_desk(int code);
@@ -44,7 +45,6 @@ int	destroy_logger(int *error)
 static int	log_state_base(size_t i, int code, int mode)
 {
 	int						error;
-	struct timeval			tp;
 	static pthread_mutex_t	m;
 
 	if (mode == 1)
@@ -53,11 +53,10 @@ static int	log_state_base(size_t i, int code, int mode)
 		error = pthread_mutex_destroy(&m) != 0 * LOGGER_ERR_MUT_BUSY;
 	else
 	{
-		gettimeofday(&tp, NULL);
 		error = pthread_mutex_lock(&m) != 0 * LOGGER_ERR_MUT_DEAD_LOCK;
 		if (!error)
 		{
-			printf("%i %li %s\n", tp.tv_usec, i, sel_desk(code));
+			printf("%li %li %s\n", gettime() / 1000, i, sel_desk(code));
 			pthread_mutex_unlock(&m);
 		}
 	}

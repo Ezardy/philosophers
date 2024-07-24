@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/06 00:49:15 by zanikin           #+#    #+#             */
-/*   Updated: 2024/07/19 05:21:15 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/07/23 20:45:57 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,12 @@ tried to destroy"
 # define LOGGER_ERR_MUT_BUSY_DESK PHILOSOPHER_ERR_MUT_BUSY_DESK
 # define LOGGER_ERR_MEM_ALLOC 12
 # define LOGGER_ERR_MEM_ALLOC_DESK PHILOSOPHER_ERR_MEM_ALLOC_DESK
+
+# define HELP_MSG "Instructions how to use program:\nphilo number_of_philosophe\
+rs time_to_die time_to_eat time_to_sleep [number_of_times_each_philosopher_must\
+_eat]\nnumber_of_philosophers ∈ [0, 18446744073709551615]\ntime_to_die ∈ [0, 42\
+94967]\ntime_to_eat ∈ [0, 4294967]\ntime_to_sleep ∈ [0, 4294967]\nnumber_of_tim\
+es_each_philosopher_must_eat ∈ [0, 18446744073709551615]\n"
 
 # define EAT_ENOUGH 254
 # define PHILOSOPHER_DIED 255

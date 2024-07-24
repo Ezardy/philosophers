@@ -1,19 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   remap.c                                            :+:      :+:    :+:   */
+/*   pthread.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/18 06:37:22 by zanikin           #+#    #+#             */
-/*   Updated: 2024/07/22 01:13:48 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/07/22 20:50:24 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <pthread.h>
 
 #include "logger/error_codes.h"
-#include "philosopher/philosopher.h"
 
 int	mut_init(pthread_mutex_t *m, int code, int *error)
 {

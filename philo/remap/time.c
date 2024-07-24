@@ -1,37 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   config.h                                           :+:      :+:    :+:   */
+/*   time.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/07/05 07:53:41 by zanikin           #+#    #+#             */
-/*   Updated: 2024/07/22 23:12:41 by zanikin          ###   ########.fr       */
+/*   Created: 2024/07/22 20:50:17 by zanikin           #+#    #+#             */
+/*   Updated: 2024/07/22 23:51:08 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef CONFIG_H
-# define CONFIG_H
-# define TIME_GAP_US 100UL
+#include <sys/time.h>
+#include <unistd.h>
+#include <stddef.h>
 
-typedef struct s_conf
+size_t	gettime(void)
 {
-	unsigned int	td;
-	unsigned int	te;
-	unsigned int	ts;
-	unsigned long	nop;
-	unsigned long	notepme;
-	int				ewf;
-}	t_conf;
+	struct timeval	tp;
 
-typedef union u_config
+	gettimeofday(&tp, NULL);
+	return (tp.tv_sec * 1000000 + tp.tv_usec);
+}
+
+void	safe_sleep(size_t t)
 {
-	t_conf	conf;
-	struct	s_conf_arr
-	{
-		unsigned int	iarr[3];
-		unsigned long	larr[2];
-		int				swd;
-	}	conf_arr;
-}	t_config;
-#endif
+	size_t	cur;
+
+	cur = gettime();
+	if (t > cur)
+		usleep((useconds_t)(t - cur));
+}

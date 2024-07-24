@@ -6,15 +6,30 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/04 16:22:20 by zanikin           #+#    #+#             */
-/*   Updated: 2024/07/22 06:17:28 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/07/23 22:19:30 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "logger/error_codes.h"
 
+int					read_ulong(const char *str, unsigned long *out);
+
 static int			iszero(char c);
 static int			isspace(char c);
 static const char	*skip_symbol(const char *str, int (*f)(char c));
+
+int	read_uint_limit(const char *str, unsigned int *out, unsigned int limit)
+{
+	int				error;
+	unsigned long	res;
+
+	error = read_ulong(str, &res);
+	if (!error)
+		error = (res > limit) * PARSER_ERR_NUM_BIG;
+	if (!error)
+		*out = (unsigned int)res;
+	return (error);
+}
 
 int	read_ulong(const char *str, unsigned long *out)
 {

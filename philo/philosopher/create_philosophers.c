@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/06 01:37:47 by zanikin           #+#    #+#             */
-/*   Updated: 2024/07/22 01:24:51 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/07/24 00:04:53 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,6 @@ void		*philosopher(void *philo);
 static int	run_threads(pthread_t *phs, pthread_mutex_t *fms,
 				const t_conf *conf);
 static int	run_threads_loop(t_philosophers *philos, pthread_t *phs);
-static void	set_philo(t_philosophers *philos, size_t i, size_t l, size_t r);
 
 int	awake_philosophers(t_conf *conf)
 {
@@ -54,7 +53,6 @@ static int	run_threads(pthread_t *phs, pthread_mutex_t *fms,
 	size_t			i;
 	t_philosophers	philos;
 
-	philos.sdied = 0;
 	philos.philos = (t_philo *)malloc(sizeof(t_philo) * conf->nop);
 	philos.conf = conf;
 	philos.fms = fms;
@@ -76,35 +74,26 @@ static int	run_threads(pthread_t *phs, pthread_mutex_t *fms,
 
 static int	run_threads_loop(t_philosophers *philos, pthread_t *phs)
 {
-	int				error;
-	size_t			i;
-	struct timeval	tp;
+	int		error;
+	size_t	i;
+	size_t	curtime;
 
 	i = 0;
 	error = 0;
-	gettimeofday(&tp, NULL);
+	curtime = gettime();
 	while (!error && i < philos->conf->nop)
 	{
-		philos->philos[i].teo = tp.tv_usec;
-		philos->philos[i].tee = tp.tv_usec + philos->conf->te;
-		if (i && i < philos->conf->nop - 1)
-			set_philo(philos, i, i - 1, i + 1);
-		else if (!i)
-			set_philo(philos, 0, philos->conf->nop - 1, 0);
-		else
-			set_philo(philos, philos->conf->nop - 1, philos->conf->nop - 1, 0);
+		philos->philos[i].teo = curtime;
+		philos->philos[i].tee = curtime + philos->conf->te;
+		philos->philos[i].ttd = curtime + philos->conf->td;
+		philos->philos[i].conf = philos->conf;
+		philos->philos[i].id = i + 1;
+		philos->philos[i].i = i;
+		philos->philos[i].lm = philos->fms + (i + 1) % philos->conf->nop;
+		philos->philos[i].rm = philos->fms + i;
+		philos->philos[i].ate = 0;
 		thr_crea(phs + i, philosopher, philos->philos + i, &error);
-		i++;
+		i += 1;
 	}
 	return (error);
-}
-
-static void	set_philo(t_philosophers *philos, size_t i, size_t l, size_t r)
-{
-	philos->philos[i].conf = philos->conf;
-	philos->philos[i].id = i + 1;
-	philos->philos[i].i = i - 1;
-	philos->philos[i].lm = philos->fms + l;
-	philos->philos[i].rm = philos->fms + r;
-	philos->philos[i].ate = 0;
 }

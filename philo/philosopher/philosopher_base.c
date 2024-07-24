@@ -6,21 +6,21 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 05:23:53 by zanikin           #+#    #+#             */
-/*   Updated: 2024/07/22 01:26:37 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/07/24 00:57:55 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <pthread.h>
 #include <unistd.h>
 #include <sys/time.h>
 
 #include "t_philo.h"
 #include "logger/error_codes.h"
-#include "logger/logger.h"
 #include "remap/remap.h"
 
-int			eat(t_philo *philo, int *error);
+int			eat(t_philo *philo, size_t t, int *error);
 int			phsleep(useconds_t ts, size_t i, int *error);
-int			think(t_philo *philo, suseconds_t t, int *error);
+int			think(t_philo *philo, size_t t, int *error);
 
 static void	*philosopher_base(t_philo *philo, int mode);
 static void	logic(t_philo *philo, int *error, int *g_state,
@@ -34,64 +34,68 @@ void	*philosopher(void *philo)
 int	init_philosopher_func(int *error)
 {
 	if (!*error)
-		*error = (int)philosopher_base(NULL, 1);
+		*error = (int)(long)philosopher_base(NULL, 1);
 	return (*error);
 }
 
 int	dest_philosopher_func(int *error)
 {
 	if (!*error)
-		*error = (int)philosopher_base(NULL, 2);
+		*error = (int)(long)philosopher_base(NULL, 2);
 	return (*error);
 }
 
 static void	*philosopher_base(t_philo *philo, int mode)
 {
-	int						error;
+	int						err;
 	static int				g_state;
 	static pthread_mutex_t	sm;
 
 	if (mode == 1)
 	{
 		g_state = 0;
-		mut_init(&sm, PHILOSOPHER_ERR_MEM_ALLOC, &error);
+		mut_init(&sm, PHILOSOPHER_ERR_MEM_ALLOC, &err);
 	}
 	else if (mode == 2)
-		mut_dest(&sm, PHILOSOPHER_ERR_MUT_BUSY, &error);
+		mut_dest(&sm, PHILOSOPHER_ERR_MUT_BUSY, &err);
 	else
 	{
-		while (philo->ate < philo->conf->notepme && !error)
+		while ((!philo->conf->ewf || philo->ate < philo->conf->notepme) && !err)
 		{
-			if (!mut_lock(&sm, PHILOSOPHER_ERR_MUT_DL, &error))
-				logic(philo, &error, &g_state, &sm);
+			if (!mut_lock(&sm, PHILOSOPHER_ERR_MUT_DL, &err))
+				logic(philo, &err, &g_state, &sm);
 			else
-				g_state = error;
+				g_state = err;
 		}
-		if (!error && philo->ate >= philo->conf->notepme)
-			error = EAT_ENOUGH;
+		if (!err && philo->conf->ewf && philo->ate >= philo->conf->notepme)
+			err = EAT_ENOUGH;
 	}
-	return ((void *)(long)error);
+	return ((void *)(long)err);
 }
 
 static void	logic(t_philo *philo, int *error, int *g_state, pthread_mutex_t *sm)
 {
+	int	st_m_err;
+
 	if (!*g_state)
 	{
 		pthread_mutex_unlock(sm);
 		if (philo->i % 2)
 		{
-			if (!(eat(philo, error) || phsleep(philo->conf->ts,
+			if (!(eat(philo, philo->teo, error) || phsleep(philo->conf->ts,
 						philo->id, error)))
 				think(philo, philo->teo, error);
 		}
 		else
-			if (!(think(philo, philo->tee, error) || eat(philo, error)))
+			if (!(think(philo, philo->tee, error)
+					|| eat(philo, philo->tee, error)))
 				phsleep(philo->conf->ts, philo->id, error);
 		philo->i = (philo->i + 1) % philo->conf->nop;
-		if (*error && !mut_lock(sm, PHILOSOPHER_ERR_MUT_DL, error))
+		if (*error)
 		{
+			st_m_err = pthread_mutex_lock(sm) != 0 * PHILOSOPHER_ERR_MUT_DL;
 			if (!*g_state)
-				*g_state = *error;
+				*g_state = st_m_err + !st_m_err * *error;
 			pthread_mutex_unlock(sm);
 		}
 	}
