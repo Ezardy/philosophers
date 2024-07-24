@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/20 08:20:55 by zanikin           #+#    #+#             */
-/*   Updated: 2024/07/23 22:06:03 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/07/24 07:06:44 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ static int	die(size_t td, size_t id, int *error);
 int	eat(t_philo *philo, size_t t, int *error)
 {
 	if (!(mut_lock(philo->lm, PHILOSOPHER_ERR_MUT_DL, error)
-			|| log_state(philo->i, LOG_TAKE_FORK, error)))
+			|| log_state(philo->id, LOG_TAKE_FORK, error)))
 	{
 		if (philo->lm == philo->rm)
 		{
@@ -35,8 +35,8 @@ int	eat(t_philo *philo, size_t t, int *error)
 		else
 		{
 			if (mut_lock(philo->rm, PHILOSOPHER_ERR_MUT_DL, error)
-				|| log_state(philo->i, LOG_TAKE_FORK, error)
-				|| log_state(philo->i, LOG_EAT, error))
+				|| log_state(philo->id, LOG_TAKE_FORK, error)
+				|| log_state(philo->id, LOG_EAT, error))
 			{
 				usleep(philo->conf->te);
 				philo->ate += 1;
@@ -65,7 +65,7 @@ int	think(t_philo *philo, size_t t, int *error)
 {
 	size_t	rem;
 
-	if (!log_state(philo->i, LOG_THINK, error))
+	if (!log_state(philo->id, LOG_THINK, error))
 	{
 		if (t < philo->ttd)
 			safe_sleep(t);

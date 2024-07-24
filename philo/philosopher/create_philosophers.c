@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/06 01:37:47 by zanikin           #+#    #+#             */
-/*   Updated: 2024/07/24 00:04:53 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/07/24 07:54:33 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,13 +74,14 @@ static int	run_threads(pthread_t *phs, pthread_mutex_t *fms,
 
 static int	run_threads_loop(t_philosophers *philos, pthread_t *phs)
 {
-	int		error;
-	size_t	i;
-	size_t	curtime;
+	int					error;
+	size_t				i;
+	size_t				curtime;
+	const unsigned long	delay = 500;
 
 	i = 0;
 	error = 0;
-	curtime = gettime();
+	curtime = gettime() + delay;
 	while (!error && i < philos->conf->nop)
 	{
 		philos->philos[i].teo = curtime;
