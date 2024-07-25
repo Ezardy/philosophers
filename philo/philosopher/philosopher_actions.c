@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/20 08:20:55 by zanikin           #+#    #+#             */
-/*   Updated: 2024/07/24 07:06:44 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/07/25 06:12:12 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,9 +34,9 @@ int	eat(t_philo *philo, size_t t, int *error)
 		}
 		else
 		{
-			if (mut_lock(philo->rm, PHILOSOPHER_ERR_MUT_DL, error)
-				|| log_state(philo->id, LOG_TAKE_FORK, error)
-				|| log_state(philo->id, LOG_EAT, error))
+			if (!(mut_lock(philo->rm, PHILOSOPHER_ERR_MUT_DL, error)
+					|| log_state(philo->id, LOG_TAKE_FORK, error)
+					|| log_state(philo->id, LOG_EAT, error)))
 			{
 				usleep(philo->conf->te);
 				philo->ate += 1;

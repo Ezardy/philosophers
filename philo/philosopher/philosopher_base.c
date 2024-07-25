@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 05:23:53 by zanikin           #+#    #+#             */
-/*   Updated: 2024/07/24 07:55:25 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/07/25 07:12:06 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 #include "remap/remap.h"
 
 int			eat(t_philo *philo, size_t t, int *error);
-int			phsleep(useconds_t ts, size_t i, int *error);
+int			phsleep(t_philo *philo, size_t t, int *error);
 int			think(t_philo *philo, size_t t, int *error);
 
 static void	*philosopher_base(t_philo *philo, int mode);
@@ -70,28 +70,30 @@ static void	*philosopher_base(t_philo *philo, int mode)
 	return ((void *)(long)err);
 }
 
-static void	logic(t_philo *philo, int *error, int *g_state, pthread_mutex_t *sm)
+static void	logic(t_philo *philo, int *err, int *g_state, pthread_mutex_t *sm)
 {
-	int	tmp;
+	int		tmp;
+	size_t	tee;
 
 	if (philo->i % 2)
 	{
-		if (!(eat(philo, philo->teo, error) || phsleep(philo->conf->ts,
-					philo->id, error)))
-			think(philo, philo->teo, error);
+		if (!(eat(philo, philo->teo, err) || phsleep(philo, philo->teo, err)))
+			think(philo, philo->teo, err);
 	}
 	else
-		if (!(think(philo, philo->tee, error)
-				|| eat(philo, philo->tee, error)))
-			phsleep(philo->conf->ts, philo->id, error);
+	{
+		tee = philo->tee;
+		if (!(think(philo, tee, err) || eat(philo, tee, err)))
+			phsleep(philo, tee, err);
+	}
 	philo->i = (philo->i + 1) % philo->conf->nop;
-	if (*error)
+	if (*err)
 	{
 		tmp = pthread_mutex_lock(sm) != 0 * PHILOSOPHER_ERR_MUT_DL;
 		if (*g_state)
-			*error = *g_state;
+			*err = *g_state;
 		else
-			*g_state = tmp + !tmp * *error;
+			*g_state = tmp + !tmp * *err;
 		if (!tmp)
 			pthread_mutex_unlock(sm);
 	}
