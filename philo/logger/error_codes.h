@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/06 00:49:15 by zanikin           #+#    #+#             */
-/*   Updated: 2024/07/23 20:45:57 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/07/25 23:45:50 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@
 # define PARSER_ERR_NON_DIG 4
 # define PARSER_ERR_NON_DIG_DESC "a non-digit symbol has been met"
 # define PARSER_ERR_NUM_BIG 5
-# define PARSER_ERR_NUM_BIG_DESC "the number too big for unsigned long"
+# define PARSER_ERR_NUM_BIG_DESC "the number too big for the program parameter"
 
 // philosopher codes
 # define PHILOSOPHER_ERR_MEM_ALLOC 6
@@ -53,6 +53,5 @@ _eat]\nnumber_of_philosophers ∈ [0, 18446744073709551615]\ntime_to_die ∈ [0,
 94967]\ntime_to_eat ∈ [0, 4294967]\ntime_to_sleep ∈ [0, 4294967]\nnumber_of_tim\
 es_each_philosopher_must_eat ∈ [0, 18446744073709551615]\n"
 
-# define EAT_ENOUGH 254
 # define PHILOSOPHER_DIED 255
 #endif

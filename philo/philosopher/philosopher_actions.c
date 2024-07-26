@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/20 08:20:55 by zanikin           #+#    #+#             */
-/*   Updated: 2024/07/25 07:17:47 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/07/25 22:05:25 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,20 +63,12 @@ int	phsleep(t_philo *philo, size_t t, int *error)
 
 int	think(t_philo *philo, size_t t, int *error)
 {
-	size_t	rem;
-
 	if (!log_state(philo->id, LOG_THINK, error))
 	{
 		if (t < philo->ttd)
 			safe_sleep(t);
 		else
 			die(philo->ttd, philo->id, error);
-		if (philo->tee - philo->teo + philo->conf->te > philo->conf->ts)
-			rem = philo->tee + philo->conf->te - philo->teo - philo->conf->ts;
-		else
-			rem = 0;
-		philo->teo = philo->teo + philo->conf->ts + rem;
-		philo->tee = philo->teo + philo->conf->te;
 	}
 	return (*error);
 }
@@ -87,4 +79,16 @@ static int	die(size_t td, size_t id, int *error)
 	if (!(*error || log_state(id, LOG_DIE, error)))
 		*error = PHILOSOPHER_DIED;
 	return (*error);
+}
+
+void	calc_eat_time(t_philo *philo)
+{
+	size_t	rem;
+
+	if (philo->tee - philo->teo + philo->conf->te > philo->conf->ts)
+		rem = philo->tee + philo->conf->te - philo->teo - philo->conf->ts;
+	else
+		rem = 0;
+	philo->teo = philo->teo + philo->conf->ts + rem;
+	philo->tee = philo->teo + philo->conf->te;
 }

@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/05 00:51:02 by zanikin           #+#    #+#             */
-/*   Updated: 2024/07/24 07:10:29 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/07/25 07:31:34 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ static void	print_logger_error(int error);
 
 void	print_error(int error)
 {
-	if (error && error < EAT_ENOUGH)
+	if (error && error < PHILOSOPHER_DIED)
 	{
 		printf("error: ");
 		if (error >= MAIN_ERR_ARG_COUNT && error < PARSER_ERR_NEG_VAL)

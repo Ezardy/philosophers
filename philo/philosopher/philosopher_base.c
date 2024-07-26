@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 05:23:53 by zanikin           #+#    #+#             */
-/*   Updated: 2024/07/25 07:12:06 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/07/26 00:54:16 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 int			eat(t_philo *philo, size_t t, int *error);
 int			phsleep(t_philo *philo, size_t t, int *error);
 int			think(t_philo *philo, size_t t, int *error);
+void		calc_eat_time(t_philo *philo);
 
 static void	*philosopher_base(t_philo *philo, int mode);
 static void	logic(t_philo *philo, int *error, int *g_state,
@@ -64,8 +65,6 @@ static void	*philosopher_base(t_philo *philo, int mode)
 		safe_sleep(philo->teo);
 		while ((!philo->conf->ewf || philo->ate < philo->conf->notepme) && !err)
 			logic(philo, &err, &g_state, &sm);
-		if (!err && philo->conf->ewf && philo->ate >= philo->conf->notepme)
-			err = EAT_ENOUGH;
 	}
 	return ((void *)(long)err);
 }
@@ -73,20 +72,20 @@ static void	*philosopher_base(t_philo *philo, int mode)
 static void	logic(t_philo *philo, int *err, int *g_state, pthread_mutex_t *sm)
 {
 	int		tmp;
-	size_t	tee;
+	size_t	te;
 
-	if (philo->i % 2)
+	if (philo->i % philo->conf->nop == 0)
 	{
-		if (!(eat(philo, philo->teo, err) || phsleep(philo, philo->teo, err)))
-			think(philo, philo->teo, err);
+		te = philo->tee;
+		think(philo, te, err);
 	}
 	else
-	{
-		tee = philo->tee;
-		if (!(think(philo, tee, err) || eat(philo, tee, err)))
-			phsleep(philo, tee, err);
-	}
-	philo->i = (philo->i + 1) % philo->conf->nop;
+		te = philo->teo;
+	eat(philo, te, err);
+	phsleep(philo, te, err);
+	if (philo->i % philo->conf->nop)
+		think(philo, te, err);
+	calc_eat_time(philo);
 	if (*err)
 	{
 		tmp = pthread_mutex_lock(sm) != 0 * PHILOSOPHER_ERR_MUT_DL;
