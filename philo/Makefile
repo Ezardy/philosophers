@@ -46,7 +46,7 @@ $(parser_dir): | $(BUILD_DIR)
 #        (__)  \_)(_/(__)\____/ \__/ (____/ \__/(__)  \_)(_/(____)(__\_)
 
 philosopher_dir=$(BUILD_DIR)/philosopher
-philosopher_modules=create_philosophers philosopher_actions philosopher_base
+philosopher_modules=philosopher create_philosophers philosopher_actions philosopher_base
 philosopher_obj=$(addprefix $(philosopher_dir)/, $(addsuffix .o, $(philosopher_modules)))
 $(philosopher_dir): | $(BUILD_DIR)
 	mkdir $@

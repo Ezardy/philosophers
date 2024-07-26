@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/06 01:37:47 by zanikin           #+#    #+#             */
-/*   Updated: 2024/07/24 07:54:33 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/07/26 07:52:29 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,7 @@ int			dest_philosopher_func(int *error);
 int			init_philosopher_func(int *error);
 void		*philosopher(void *philo);
 
-static int	run_threads(pthread_t *phs, pthread_mutex_t *fms,
-				const t_conf *conf);
+static int	run_threads(pthread_t *phs, pthread_mutex_t *fms, t_conf *conf);
 static int	run_threads_loop(t_philosophers *philos, pthread_t *phs);
 
 int	awake_philosophers(t_conf *conf)
@@ -46,8 +45,7 @@ int	awake_philosophers(t_conf *conf)
 	return (error);
 }
 
-static int	run_threads(pthread_t *phs, pthread_mutex_t *fms,
-				const t_conf *conf)
+static int	run_threads(pthread_t *phs, pthread_mutex_t *fms, t_conf *conf)
 {
 	int				err;
 	size_t			i;
@@ -76,17 +74,16 @@ static int	run_threads_loop(t_philosophers *philos, pthread_t *phs)
 {
 	int					error;
 	size_t				i;
-	size_t				curtime;
-	const unsigned long	delay = 500;
+	const unsigned long	delay = 500000;
 
 	i = 0;
 	error = 0;
-	curtime = gettime() + delay;
+	philos->conf->stt = gettime() + delay;
 	while (!error && i < philos->conf->nop)
 	{
-		philos->philos[i].teo = curtime;
-		philos->philos[i].tee = curtime + philos->conf->te;
-		philos->philos[i].ttd = curtime + philos->conf->td;
+		philos->philos[i].teo = philos->conf->stt;
+		philos->philos[i].tee = philos->conf->stt + philos->conf->te;
+		philos->philos[i].ttd = philos->conf->stt + philos->conf->td;
 		philos->philos[i].conf = philos->conf;
 		philos->philos[i].id = i + 1;
 		philos->philos[i].i = i;
