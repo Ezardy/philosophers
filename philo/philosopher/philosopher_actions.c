@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/20 08:20:55 by zanikin           #+#    #+#             */
-/*   Updated: 2024/07/26 07:54:54 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/07/27 00:49:20 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ int	eat(t_philo *philo, size_t t, int *error)
 			{
 				usleep(philo->conf->te);
 				philo->ate += 1;
-				philo->ttd = t + philo->conf->td;
+				philo->ttd = t + philo->conf->te + philo->conf->td;
 				pthread_mutex_unlock(philo->lm);
 				pthread_mutex_unlock(philo->rm);
 			}
