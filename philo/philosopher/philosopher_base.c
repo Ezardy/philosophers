@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 05:23:53 by zanikin           #+#    #+#             */
-/*   Updated: 2024/07/26 07:37:48 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/07/29 00:14:10 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,9 @@ int			phsleep(t_philo *philo, size_t t, int *error);
 int			think(t_philo *philo, size_t t, int *error);
 
 static void	step(t_philo *philo);
-static void	logic(t_philo *philo, int *error, int *g_state,
+static void	logic_odd(t_philo *philo, int *error, int *g_state,
+				pthread_mutex_t *sm);
+static void	logic_even(t_philo *philo, int *error, int *g_state,
 				pthread_mutex_t *sm);
 static void	set_error(pthread_mutex_t *sm, int *err, int *g_state);
 
@@ -32,6 +34,8 @@ void	*philosopher_base(t_philo *philo, int mode)
 	int						err;
 	static int				g_state;
 	static pthread_mutex_t	sm;
+	void					(*logic)(t_philo *, int *, int *,
+			pthread_mutex_t *);
 
 	err = 0;
 	if (mode == 1)
@@ -43,6 +47,10 @@ void	*philosopher_base(t_philo *philo, int mode)
 		mut_dest(&sm, PHILOSOPHER_ERR_MUT_BUSY, &err);
 	else
 	{
+		if (philo->id % 2)
+			logic = logic_odd;
+		else
+			logic = logic_even;
 		safe_sleep(philo->teo);
 		while ((!philo->conf->ewf || philo->ate < philo->conf->notepme) && !err)
 			logic(philo, &err, &g_state, &sm);
@@ -50,26 +58,46 @@ void	*philosopher_base(t_philo *philo, int mode)
 	return ((void *)(long)err);
 }
 
-static void	logic(t_philo *philo, int *err, int *g_state, pthread_mutex_t *sm)
+static void	logic_odd(t_philo *philo, int *err, int *g_state,
+				pthread_mutex_t *sm)
 {
 	size_t	te;
 
-	if (philo->i < philo->conf->nop - 1 || philo->i % 2)
+	if ((philo->i == philo->conf->nop - 1) && (philo->i % 2 == 0))
 	{
-		if (philo->i % 2 == 0)
-		{
-			te = philo->tee;
-			think(philo, te, err);
-		}
-		else
-			te = philo->teo;
-		eat(philo, te, err);
-		phsleep(philo, te, err);
-		if (philo->i % 2)
-			think(philo, te, err);
-		set_error(sm, err, g_state);
+		step(philo);
+		te = philo->teo;
 	}
+	else if (philo->i % 2)
+		te = philo->teo;
+	else
+		te = philo->tee;
+	think(philo, te, err);
+	eat(philo, te, err);
+	phsleep(philo, te, err);
 	step(philo);
+	set_error(sm, err, g_state);
+}
+
+static void	logic_even(t_philo *philo, int *err, int *g_state,
+				pthread_mutex_t *sm)
+{
+	size_t	te;
+
+	if ((philo->i == philo->conf->nop - 1) && (philo->i % 2 == 0))
+	{
+		step(philo);
+		te = philo->teo;
+	}
+	else if (philo->i % 2)
+		te = philo->teo;
+	else
+		te = philo->tee;
+	eat(philo, te, err);
+	phsleep(philo, te, err);
+	think(philo, te, err);
+	step(philo);
+	set_error(sm, err, g_state);
 }
 
 static void	set_error(pthread_mutex_t *sm, int *err, int *g_state)

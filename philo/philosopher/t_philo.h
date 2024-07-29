@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/06 02:21:37 by zanikin           #+#    #+#             */
-/*   Updated: 2024/07/26 07:48:06 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/07/28 22:14:04 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ typedef struct s_philosophers
 {
 	int				*fs;
 	t_philo			*philos;
-	t_conf	*conf;
+	t_conf			*conf;
 	pthread_mutex_t	*fms;
 }	t_philosophers;
 #endif
