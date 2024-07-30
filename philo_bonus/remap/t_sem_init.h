@@ -16,6 +16,6 @@
 typedef struct s_sem_init
 {
 	const char		*name;
-	unsigned int	nop;
+	unsigned int	n;
 }	t_sem_init;
 #endif

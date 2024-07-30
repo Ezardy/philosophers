@@ -26,26 +26,39 @@
 # define PARSER_ERR_NON_DIG_DESC "a non-digit symbol has been met"
 # define PARSER_ERR_NUM_BIG 5
 # define PARSER_ERR_NUM_BIG_DESC "the number too big for the program parameter"
+# define PARSER_ERR_BEGIN PARSER_ERR_NEG_VAL
+# define PARSER_ERR_END PARSER_ERR_NUM_BIG
 
 // philosopher codes
-# define PHILOSOPHER_ERR_MEM_ALLOC 6
-# define PHILOSOPHER_ERR_MEM_ALLOC_DESK "failed to allocate memory"
+# define PHILOSOPHER_ERR_PROC_MEM 6
+# define PHILOSOPHER_ERR_PROC_MEM_DESK "There is insufficient swap space for th\
+e new process"
 # define PHILOSOPHER_ERR_DL 7
 # define PHILOSOPHER_ERR_DL_DESK "dead lock was detected"
-# define PHILOSOPHER_ERR_MUT_DL 8
-# define PHILOSOPHER_ERR_MUT_DL_DESK "there should be dead lock if mutex\
- will be locked"
-# define PHILOSOPHER_ERR_MUT_BUSY 9
-# define PHILOSOPHER_ERR_MUT_BUSY_DESK "a mutex, which was locked, has been \
-tried to destroy"
+# define PHILOSOPHER_ERR_PROC_LIM 8
+# define PHILOSOPHER_ERR_PROC_LIM_DESK "The system-imposed limit on the total n\
+umber of processes under execution would be exceeded"
+# define PHILOSOPHER_ERR_SEM_NOSPC 9
+# define  PHILOSOPHER_ERR_SEM_NOSPC_DESK "There is insufficient space available\
+ to create the semaphore"
+# define PHILOSOPHER_ERR_SEM_ENFILE 10
+# define PHILOSOPHER_ERR_SEM_ENFILE_DESK "Too many semaphores of file descripto\
+rs are open on the system"
+# define PHILOSOPHER_ERR_SEM_EMFILE 11
+# define PHILOSOPHER_ERR_SEM_EMFILE_DESK "The process has already reached its l\
+imit for semphores or file descriptors in use"
+# define PHILOSOPHER_ERR_BEGIN PHILOSOPHER_ERR_PROC_MEM
+# define PHILOSOPHER_ERR_END PHILOSOPHER_ERR_SEM_EMFILE
 
 // logger codes
-# define LOGGER_ERR_MUT_DEAD_LOCK 10
-# define LOGGER_ERR_MUT_DEAD_LOCK_DESK PHILOSOPHER_ERR_MUT_DL_DESK
-# define LOGGER_ERR_MUT_BUSY 11
-# define LOGGER_ERR_MUT_BUSY_DESK PHILOSOPHER_ERR_MUT_BUSY_DESK
-# define LOGGER_ERR_MEM_ALLOC 12
-# define LOGGER_ERR_MEM_ALLOC_DESK PHILOSOPHER_ERR_MEM_ALLOC_DESK
+# define LOGGER_ERR_SEM_NOSPC 12
+# define LOGGER_ERR_SEM_NOSPC_DESK PHILOSOPHER_ERR_SEM_NOSPC_DESK
+# define LOGGER_ERR_SEM_ENFILE 13
+# define LOGGER_ERR_SEM_ENFILE_DESK PHILOSOPHER_ERR_SEM_ENFILE_DESK
+# define LOGGER_ERR_SEM_EMFILE 14
+# define LOGGER_ERR_SEM_EMFILE_DESK PHILOSOPHER_ERR_SEM_EMFILE_DESK
+# define LOGGER_ERR_BEGIN LOGGER_ERR_SEM_NOSPC
+# define LOGGER_ERR_END LOGGER_ERR_SEM_EMFILE
 
 # define HELP_MSG "Instructions how to use program:\nphilo number_of_philosophe\
 rs time_to_die time_to_eat time_to_sleep [number_of_times_each_philosopher_must\
