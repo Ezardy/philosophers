@@ -6,16 +6,18 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/17 21:11:30 by zanikin           #+#    #+#             */
-/*   Updated: 2024/07/26 07:51:51 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/07/31 15:18:57 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <pthread.h>
 #include <stdio.h>
+#include <sys/semaphore.h>
 #include <sys/time.h>
 
+#include "logger/error_codes.h"
+#include "remap/t_sem_init.h"
 #include "state_codes.h"
-#include "error_codes.h"
 #include "remap/remap.h"
 
 static int			log_state_base(size_t start_time, size_t i, int code,
@@ -46,20 +48,20 @@ int	destroy_logger(int *error)
 static int	log_state_base(size_t start_time, size_t i, int code, int mode)
 {
 	int						error;
-	static pthread_mutex_t	m;
+	static sem_t			*s;
+	const t_sem_init		sem_init = {"philo_logger", 1};
 
 	if (mode == 1)
-		error = pthread_mutex_init(&m, NULL) != 0 * LOGGER_ERR_MEM_ALLOC;
+		sem_open_r(s, &sem_init, code, &error);
 	else if (mode == 2)
-		error = pthread_mutex_destroy(&m) != 0 * LOGGER_ERR_MUT_BUSY;
+		sem_close(s);
 	else
 	{
-		error = pthread_mutex_lock(&m) != 0 * LOGGER_ERR_MUT_DEAD_LOCK;
-		if (!error)
+		if (!sem_wait_r(s, LOGGER_ERR_BEGIN, &error))
 		{
 			printf("%li %li %s\n", (gettime() - start_time) / 1000, i,
 				sel_desk(code));
-			pthread_mutex_unlock(&m);
+			sem_post(s);
 		}
 	}
 	return (error);

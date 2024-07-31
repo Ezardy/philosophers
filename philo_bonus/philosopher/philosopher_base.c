@@ -6,11 +6,12 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 05:23:53 by zanikin           #+#    #+#             */
-/*   Updated: 2024/07/29 07:49:01 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/07/31 15:32:48 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <pthread.h>
+#include <sys/semaphore.h>
 #include <unistd.h>
 #include <sys/time.h>
 
@@ -18,6 +19,7 @@
 #include "remap/remap.h"
 #include "t_philo.h"
 #include "t_state.h"
+#include "remap/t_sem_init.h"
 
 int			eat(t_philo *philo, size_t t, int *error, t_state *state);
 int			phsleep(t_philo *philo, size_t t, int *error, t_state *state);
@@ -30,15 +32,16 @@ static void	set_error(int *err, t_state *state);
 
 void	*philosopher_base(t_philo *philo, int mode)
 {
-	int				err;
-	static t_state	state = {0};
-	void			(*logic)(t_philo *, int *, t_state *);
+	int					err;
+	static t_state		state = {0};
+	const t_sem_init	sem_init = {"philosophers_global_state", 1};
+	void				(*logic)(t_philo *, int *, t_state *);
 
 	err = 0;
 	if (mode == 1)
-		mut_init(&state.sm, PHILOSOPHER_ERR_MEM_ALLOC, &err);
+		sem_open_r(state.ss, &sem_init, PHILOSOPHER_ERR_BEGIN, &err);
 	else if (mode == 2)
-		mut_dest(&state.sm, PHILOSOPHER_ERR_MUT_BUSY, &err);
+		sem_close(state.ss);
 	else
 	{
 		if (philo->id % 2)
@@ -96,7 +99,7 @@ static void	set_error(int *err, t_state *state)
 {
 	int	tmp;
 
-	tmp = pthread_mutex_lock(&state->sm) != 0 * PHILOSOPHER_ERR_MUT_DL;
+	tmp = sem_wait_r(state->ss, PHILOSOPHER_ERR_BEGIN, err);
 	if (state->state)
 		*err = state->state;
 	else
@@ -107,7 +110,7 @@ static void	set_error(int *err, t_state *state)
 			state->state = *err;
 	}
 	if (!tmp)
-		pthread_mutex_unlock(&state->sm);
+		sem_post(state->ss);
 }
 
 static void	step(t_philo *philo)

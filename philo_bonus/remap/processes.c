@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/18 06:37:22 by zanikin           #+#    #+#             */
-/*   Updated: 2024/07/31 14:41:16 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/07/31 15:14:58 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 #include "logger/error_codes.h"
 #include "t_sem_init.h"
 
-int	sem_open_r(sem_t *s, t_sem_init *si, int code, int *error)
+int	sem_open_r(sem_t *s, const t_sem_init *si, int code, int *error)
 {
 	if (!*error)
 	{

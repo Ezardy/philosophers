@@ -6,12 +6,13 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/06 02:21:37 by zanikin           #+#    #+#             */
-/*   Updated: 2024/07/28 22:14:04 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/07/31 15:36:40 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef T_PHILO_H
 # define T_PHILO_H
+# include <sys/semaphore.h>
 # include <sys/time.h>
 # include <pthread.h>
 
@@ -19,8 +20,7 @@
 
 typedef struct s_philo
 {
-	pthread_mutex_t	*lm;
-	pthread_mutex_t	*rm;
+	sem_t			*s;
 	const t_conf	*conf;
 	size_t			i;
 	size_t			id;
@@ -35,6 +35,5 @@ typedef struct s_philosophers
 	int				*fs;
 	t_philo			*philos;
 	t_conf			*conf;
-	pthread_mutex_t	*fms;
 }	t_philosophers;
 #endif

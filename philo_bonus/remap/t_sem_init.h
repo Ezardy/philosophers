@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/29 23:16:32 by zanikin           #+#    #+#             */
-/*   Updated: 2024/07/29 23:18:50 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/07/31 15:19:46 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 typedef struct s_sem_init
 {
-	const char		*name;
+	char			*name;
 	unsigned int	n;
 }	t_sem_init;
 #endif

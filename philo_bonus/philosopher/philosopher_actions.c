@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/20 08:20:55 by zanikin           #+#    #+#             */
-/*   Updated: 2024/07/29 21:53:55 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/07/31 15:09:45 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,28 +26,23 @@ static int	die(t_philo *philo, int *error, t_state *state);
 
 int	eat(t_philo *philo, size_t t, int *error, t_state *state)
 {
-	if (!(mut_lock(philo->lm, PHILOSOPHER_ERR_MUT_DL, error)
+	if (!(sem_wait_r(philo->s, PHILOSOPHER_ERR_BEGIN, error)
 			|| log_state(philo->conf->stt, philo->id, LOG_TAKE_FORK, error)))
 	{
-		if (philo->lm == philo->rm)
-		{
+		if (sem_wait_r(philo->s, PHILOSOPHER_ERR_BEGIN, error))
 			die(philo, error, state);
-			pthread_mutex_unlock(philo->lm);
-		}
 		else
 		{
-			if (!(mut_lock(philo->rm, PHILOSOPHER_ERR_MUT_DL, error)
-					|| log_state(philo->conf->stt, philo->id, LOG_TAKE_FORK,
-						error)
+			if (!(log_state(philo->conf->stt, philo->id, LOG_TAKE_FORK, error)
 					|| log_state(philo->conf->stt, philo->id, LOG_EAT, error)))
 			{
 				usleep(philo->conf->te);
 				philo->ate += 1;
 				philo->ttd = t + philo->conf->te + philo->conf->td;
-				pthread_mutex_unlock(philo->lm);
-				pthread_mutex_unlock(philo->rm);
+				sem_post(philo->s);
 			}
 		}
+		sem_post(philo->s);
 	}
 	return (*error || philo->ate >= philo->conf->notepme);
 }
@@ -79,7 +74,7 @@ int	think(t_philo *philo, size_t t, int *error, t_state *state)
 static int	die(t_philo *philo, int *error, t_state *state)
 {
 	safe_sleep(philo->ttd);
-	if (!mut_lock(&state->ss, PHILOSOPHER_ERR_MUT_DL, error))
+	if (!sem_wait_r(state->ss, PHILOSOPHER_ERR_BEGIN, error))
 	{
 		if (!(state->state || log_state(philo->conf->stt, philo->id, LOG_DIE,
 					error)))
