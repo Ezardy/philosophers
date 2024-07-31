@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/18 06:37:22 by zanikin           #+#    #+#             */
-/*   Updated: 2024/07/31 15:14:58 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/07/31 15:52:52 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ int	proc_wait(pid_t pid, int *error)
 	return (*error);
 }
 
-int	proc_crea(pid_t *pid, void (*func)(void *), void *arg, int *error)
+int	proc_crea(pid_t *pid, int *error)
 {
 	if (!*error)
 	{

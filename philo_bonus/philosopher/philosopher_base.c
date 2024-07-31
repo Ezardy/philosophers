@@ -6,11 +6,11 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 05:23:53 by zanikin           #+#    #+#             */
-/*   Updated: 2024/07/31 15:32:48 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/07/31 15:53:13 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <pthread.h>
+#include <stdlib.h>
 #include <sys/semaphore.h>
 #include <unistd.h>
 #include <sys/time.h>
@@ -30,7 +30,7 @@ static void	logic_odd(t_philo *philo, int *error, t_state *state);
 static void	logic_even(t_philo *philo, int *error, t_state *state);
 static void	set_error(int *err, t_state *state);
 
-void	*philosopher_base(t_philo *philo, int mode)
+int	philosopher_base(t_philo *philo, int mode)
 {
 	int					err;
 	static t_state		state = {0};
@@ -51,8 +51,9 @@ void	*philosopher_base(t_philo *philo, int mode)
 		safe_sleep(philo->teo);
 		while ((!philo->conf->ewf || philo->ate < philo->conf->notepme) && !err)
 			logic(philo, &err, &state);
+		exit(err);
 	}
-	return ((void *)(long)err);
+	return (err);
 }
 
 static void	logic_odd(t_philo *philo, int *err, t_state *state)
