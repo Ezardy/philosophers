@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/06 00:49:15 by zanikin           #+#    #+#             */
-/*   Updated: 2024/07/31 14:40:23 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/07/31 15:40:37 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@
 // main codes
 # define MAIN_ERR_ARG_COUNT 1
 # define MAIN_ERR_ARG_COUNT_DESC "Wrong arguments count"
+# define MAIN_ERR_BEGIN MAIN_ERR_ARG_COUNT
+# define MAIN_ERR_END MAIN_ERR_ARG_COUNT
 
 // parser codes
 # define PARSER_ERR_NEG_VAL 2
