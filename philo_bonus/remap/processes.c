@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/18 06:37:22 by zanikin           #+#    #+#             */
-/*   Updated: 2024/07/30 19:06:30 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/07/31 14:41:16 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include <sys/semaphore.h>
 #include <sys/_types/_s_ifmt.h>
 #include <sys/fcntl.h>
+#include <sys/wait.h>
 #include <unistd.h>
 
 #include "logger/error_codes.h"
@@ -44,16 +45,27 @@ int	sem_open_r(sem_t *s, t_sem_init *si, int code, int *error)
 	return (*error);
 }
 
-int	thr_join(pthread_t t, int *error)
+int	sem_wait_r(sem_t *s, int code, int *error)
 {
-	int	err;
+	if (!*error)
+	{
+		*error = sem_wait(s);
+		if (*error == -1)
+			*error = (code == PHILOSOPHER_ERR_BEGIN) * PHILOSOPHER_ERR_SEM_DL
+				+ (code == LOGGER_ERR_BEGIN) * LOGGER_ERR_SEM_DL;
+	}
+	return (*error);
+}
+
+int	proc_wait(pid_t pid, int *error)
+{
+	int	stat_loc;
 
 	if (!*error)
-		err = pthread_join(t, (void *)error) != 0 * PHILOSOPHER_ERR_DL;
-	else
-		err = 0;
-	if (err)
-		*error = err;
+	{
+		waitpid(pid, &stat_loc, 0);
+		*error = WEXITSTATUS(stat_loc);
+	}
 	return (*error);
 }
 

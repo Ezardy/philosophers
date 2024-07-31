@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/06 00:49:15 by zanikin           #+#    #+#             */
-/*   Updated: 2024/07/25 23:45:50 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/07/31 14:40:23 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,17 +15,17 @@
 
 // main codes
 # define MAIN_ERR_ARG_COUNT 1
-# define MAIN_ERR_ARG_COUNT_DESC "wrong arguments count"
+# define MAIN_ERR_ARG_COUNT_DESC "Wrong arguments count"
 
 // parser codes
 # define PARSER_ERR_NEG_VAL 2
-# define PARSER_ERR_NEG_VAL_DESC "a non-negative value expected"
+# define PARSER_ERR_NEG_VAL_DESC "A non-negative value expected"
 # define PARSER_ERR_EMP_STR 3
-# define PARSER_ERR_EMP_STR_DESC "an empty string presented"
+# define PARSER_ERR_EMP_STR_DESC "An empty string presented"
 # define PARSER_ERR_NON_DIG 4
-# define PARSER_ERR_NON_DIG_DESC "a non-digit symbol has been met"
+# define PARSER_ERR_NON_DIG_DESC "A non-digit symbol has been met"
 # define PARSER_ERR_NUM_BIG 5
-# define PARSER_ERR_NUM_BIG_DESC "the number too big for the program parameter"
+# define PARSER_ERR_NUM_BIG_DESC "The number too big for the program parameter"
 # define PARSER_ERR_BEGIN PARSER_ERR_NEG_VAL
 # define PARSER_ERR_END PARSER_ERR_NUM_BIG
 
@@ -33,14 +33,14 @@
 # define PHILOSOPHER_ERR_PROC_MEM 6
 # define PHILOSOPHER_ERR_PROC_MEM_DESK "There is insufficient swap space for th\
 e new process"
-# define PHILOSOPHER_ERR_DL 7
-# define PHILOSOPHER_ERR_DL_DESK "dead lock was detected"
+# define PHILOSOPHER_ERR_SEM_DL 7
+# define PHILOSOPHER_ERR_SEM_DL_DESK "A dead lock was detected"
 # define PHILOSOPHER_ERR_PROC_LIM 8
 # define PHILOSOPHER_ERR_PROC_LIM_DESK "The system-imposed limit on the total n\
 umber of processes under execution would be exceeded"
 # define PHILOSOPHER_ERR_SEM_NOSPC 9
-# define  PHILOSOPHER_ERR_SEM_NOSPC_DESK "There is insufficient space available\
- to create the semaphore"
+# define PHILOSOPHER_ERR_SEM_NOSPC_DESK "There is insufficient space availablet\
+o create the semaphore"
 # define PHILOSOPHER_ERR_SEM_ENFILE 10
 # define PHILOSOPHER_ERR_SEM_ENFILE_DESK "Too many semaphores of file descripto\
 rs are open on the system"
@@ -57,6 +57,8 @@ imit for semphores or file descriptors in use"
 # define LOGGER_ERR_SEM_ENFILE_DESK PHILOSOPHER_ERR_SEM_ENFILE_DESK
 # define LOGGER_ERR_SEM_EMFILE 14
 # define LOGGER_ERR_SEM_EMFILE_DESK PHILOSOPHER_ERR_SEM_EMFILE_DESK
+# define LOGGER_ERR_SEM_DL 15
+# define LOGGER_ERR_SEM_DL_DESK PHILOSOPHER_ERR_SEM_DL_DESK
 # define LOGGER_ERR_BEGIN LOGGER_ERR_SEM_NOSPC
 # define LOGGER_ERR_END LOGGER_ERR_SEM_EMFILE
 
