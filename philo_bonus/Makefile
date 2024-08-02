@@ -1,3 +1,5 @@
+# Font: Graceful
+
 NAME=philo_bonus
 BUILD_DIR=build
 cflags=-Wall -Wextra -Werror
@@ -24,7 +26,7 @@ fclean: clean
 #        \____/ \__/  \___/ \___/(____)(__\_)
 
 logger_dir=$(BUILD_DIR)/logger
-logger_modules=error logger
+logger_modules=error logger error_modules
 logger_obj=$(addprefix $(logger_dir)/, $(addsuffix .o, $(logger_modules)))
 $(logger_dir): | $(BUILD_DIR)
 	mkdir $@
@@ -57,9 +59,20 @@ $(philosopher_dir): | $(BUILD_DIR)
 #        (__\_)(____)\_)(_/\_/\_/(__)
 
 remap_dir=$(BUILD_DIR)/remap
-remap_modules=pthread time
+remap_modules=semaphore time
 remap_obj=$(addprefix $(remap_dir)/, $(addsuffix .o, $(remap_modules)))
 $(remap_dir): | $(BUILD_DIR)
+	mkdir $@
+
+#         ____  __  ____        __    __  ____  ____ 
+#        (  _ \(  )(    \      (  )  (  )/ ___)(_  _)
+#         ) __/ )(  ) D ( ____ / (_/\ )( \___ \  )(  
+#        (__)  (__)(____/(____)\____/(__)(____/ (__) 
+
+pid_list_dir=$(BUILD_DIR)/pid_list
+pid_list_modules=pid_list
+pid_list_obj=$(addprefix $(pid_list_dir)/, $(addsuffix .o, $(pid_list_modules)))
+$(pid_list_dir): | $(BUILD_DIR)
 	mkdir $@
 
 #         _  _   __   __  __ _
@@ -67,11 +80,11 @@ $(remap_dir): | $(BUILD_DIR)
 #        / \/ \/    \ )( /    /
 #        \_)(_/\_/\_/(__)\_)__)
 
-obj=$(BUILD_DIR)/main.o $(logger_obj) $(parser_obj) $(philosopher_obj) $(remap_obj)
+obj=$(BUILD_DIR)/main.o $(logger_obj) $(parser_obj) $(philosopher_obj) $(remap_obj) $(pid_list_obj)
 $(BUILD_DIR):
 	mkdir $@
 
-dirs: $(logger_dir) $(parser_dir) $(philosopher_dir) $(remap_dir)
+dirs: $(logger_dir) $(parser_dir) $(philosopher_dir) $(remap_dir) $(pid_list_dir)
 
 $(NAME): $(obj)
 	cc $(iflags) $(cflags) $(lflags) -o $@ $(obj)

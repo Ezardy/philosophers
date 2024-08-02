@@ -5,18 +5,17 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/07/31 18:48:01 by zanikin           #+#    #+#             */
-/*   Updated: 2024/07/31 18:49:56 by zanikin          ###   ########.fr       */
+/*   Created: 2024/08/01 00:42:09 by zanikin           #+#    #+#             */
+/*   Updated: 2024/08/01 01:16:13 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PID_LIST_H
 # define PID_LIST_H
-# include <sys/_types/_pid_t.h>
+# include "t_pid_list.h"
 
-typedef struct s_pid_list
-{
-	struct s_pid_list	*n;
-	pid_t				pid;
-}	t_pid_list;
+int		push_pid(t_pid_list **list, pid_t pid);
+void	pop_pid(t_pid_list **list);
+void	destroy_pid_list(t_pid_list **list);
+void	remove_pid(t_pid_list **list, pid_t pid);
 #endif

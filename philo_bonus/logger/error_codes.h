@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/06 00:49:15 by zanikin           #+#    #+#             */
-/*   Updated: 2024/07/31 15:40:37 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/08/02 07:18:07 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,8 +41,8 @@ e new process"
 # define PHILOSOPHER_ERR_PROC_LIM_DESK "The system-imposed limit on the total n\
 umber of processes under execution would be exceeded"
 # define PHILOSOPHER_ERR_SEM_NOSPC 9
-# define PHILOSOPHER_ERR_SEM_NOSPC_DESK "There is insufficient space availablet\
-o create the semaphore"
+# define PHILOSOPHER_ERR_SEM_NOSPC_DESK "There is insufficient space available \
+to create the semaphore"
 # define PHILOSOPHER_ERR_SEM_ENFILE 10
 # define PHILOSOPHER_ERR_SEM_ENFILE_DESK "Too many semaphores of file descripto\
 rs are open on the system"
@@ -63,6 +63,11 @@ imit for semphores or file descriptors in use"
 # define LOGGER_ERR_SEM_DL_DESK PHILOSOPHER_ERR_SEM_DL_DESK
 # define LOGGER_ERR_BEGIN LOGGER_ERR_SEM_NOSPC
 # define LOGGER_ERR_END LOGGER_ERR_SEM_EMFILE
+
+# define PID_LIST_ERR_MEMALLOC 16
+# define PID_LIST_ERR_MEMALLOC_DESK "Can't allocate memory"
+# define PID_LIST_ERR_BEGIN PID_LIST_ERR_MEMALLOC
+# define PID_LIST_ERR_END PID_LIST_ERR_MEMALLOC
 
 # define HELP_MSG "Instructions how to use program:\nphilo number_of_philosophe\
 rs time_to_die time_to_eat time_to_sleep [number_of_times_each_philosopher_must\

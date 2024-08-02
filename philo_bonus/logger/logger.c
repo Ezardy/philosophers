@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/17 21:11:30 by zanikin           #+#    #+#             */
-/*   Updated: 2024/07/31 15:18:57 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/08/02 06:16:31 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,11 +38,9 @@ int	init_logger(int *error)
 	return (*error);
 }
 
-int	destroy_logger(int *error)
+void	destroy_logger(int global)
 {
-	if (!*error)
-		*error = log_state_base(0, 0, 0, 2);
-	return (*error);
+	log_state_base(0, 0, 0, 2 + global);
 }
 
 static int	log_state_base(size_t start_time, size_t i, int code, int mode)
@@ -51,10 +49,16 @@ static int	log_state_base(size_t start_time, size_t i, int code, int mode)
 	static sem_t			*s;
 	const t_sem_init		sem_init = {"philo_logger", 1};
 
+	error = 0;
 	if (mode == 1)
 		sem_open_r(s, &sem_init, code, &error);
 	else if (mode == 2)
 		sem_close(s);
+	else if (mode == 3)
+	{
+		sem_close(s);
+		sem_unlink(sem_init.name);
+	}
 	else
 	{
 		if (!sem_wait_r(s, LOGGER_ERR_BEGIN, &error))

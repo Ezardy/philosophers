@@ -6,92 +6,129 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/06 01:37:47 by zanikin           #+#    #+#             */
-/*   Updated: 2024/07/28 23:09:59 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/08/02 07:33:26 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
-#include <string.h>
+#include <signal.h>
+#include <sys/_types/_pid_t.h>
+#include <sys/_types/_size_t.h>
+#include <sys/semaphore.h>
+#include <sys/signal.h>
+#include <sys/wait.h>
+#include <unistd.h>
+#include <errno.h>
 
-#include "remap/remap.h"
+#include "pid_list/pid_list.h"
+#include "logger/logger.h"
 #include "logger/error_codes.h"
+#include "philosopher/t_philo.h"
+#include "remap/remap.h"
 #include "config.h"
-#include "t_philo.h"
+#include "remap/t_sem_init.h"
 
-int			dest_philosopher_func(int *error);
+void		dest_philosopher_func(void);
 int			init_philosopher_func(int *error);
-void		*philosopher(void *philo);
+int			philosopher(void *philo);
 
-static int	run_threads(pthread_t *phs, pthread_mutex_t *fms, t_conf *conf);
-static int	run_threads_loop(t_philosophers *philos, pthread_t *phs);
+static void	set_philo(t_philo *philo, size_t i);
+static int	create_philosopher(t_philo *philo, t_pid_list **pids);
+static int	wait_philosophers(t_pid_list **pids, int *error);
 
 int	awake_philosophers(t_conf *conf)
 {
-	int				error;
-	pthread_t		*phs;
-	pthread_mutex_t	*fms;
-
-	phs = (pthread_t *)malloc(sizeof(pthread_t) * conf->nop);
-	fms = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t) * conf->nop);
-	error = (phs == NULL || fms == NULL)
-		* PHILOSOPHER_ERR_MEM_ALLOC;
-	if (!init_philosopher_func(&error))
-	{
-		error = run_threads(phs, fms, conf);
-		dest_philosopher_func(&error);
-	}
-	free(fms);
-	free(phs);
-	return (error);
-}
-
-static int	run_threads(pthread_t *phs, pthread_mutex_t *fms, t_conf *conf)
-{
-	int				err;
-	size_t			i;
-	t_philosophers	philos;
-
-	philos.philos = (t_philo *)malloc(sizeof(t_philo) * conf->nop);
-	philos.conf = conf;
-	philos.fms = fms;
-	err = (philos.philos == NULL) * PHILOSOPHER_ERR_MEM_ALLOC;
-	i = 0;
-	while (i < conf->nop && !mut_init(fms + i, PHILOSOPHER_ERR_MEM_ALLOC, &err))
-		i = i + 1;
-	if (!err)
-		err = run_threads_loop(&philos, phs);
-	i = 0;
-	while (i < philos.conf->nop && !thr_join(phs[i], &err))
-		i = i + 1;
-	free(philos.philos);
-	i = 0;
-	while (i < conf->nop && !mut_dest(fms + i, PHILOSOPHER_ERR_MUT_BUSY, &err))
-		i = i + 1;
-	return (err);
-}
-
-static int	run_threads_loop(t_philosophers *philos, pthread_t *phs)
-{
 	int					error;
+	t_philo				philo;
+	const t_sem_init	sem_init = {"philosophers_forks", conf->nop};
 	size_t				i;
-	const unsigned long	delay = 500000;
+	t_pid_list			*pids;
 
-	i = 0;
 	error = 0;
-	philos->conf->stt = gettime() + delay;
-	while (!error && i < philos->conf->nop)
+	pids = NULL;
+	if (!(init_philosopher_func(&error) || sem_open_r(philo.s, &sem_init,
+				PHILOSOPHER_ERR_BEGIN, &error)))
 	{
-		philos->philos[i].teo = philos->conf->stt;
-		philos->philos[i].tee = philos->conf->stt + philos->conf->te;
-		philos->philos[i].ttd = philos->conf->stt + philos->conf->td;
-		philos->philos[i].conf = philos->conf;
-		philos->philos[i].id = i + 1;
-		philos->philos[i].i = i;
-		philos->philos[i].lm = philos->fms + (i + 1) % philos->conf->nop;
-		philos->philos[i].rm = philos->fms + i;
-		philos->philos[i].ate = 0;
-		thr_crea(phs + i, philosopher, philos->philos + i, &error);
-		i += 1;
+		conf->stt = gettime() + 500000;
+		philo.conf = conf;
+		i = 0;
+		while (!error && i < conf->nop)
+		{
+			set_philo(&philo, i++);
+			error = create_philosopher(&philo, &pids);
+		}
+		wait_philosophers(&pids, &error);
 	}
+	sem_close(philo.s);
+	sem_unlink(sem_init.name);
+	dest_philosopher_func();
 	return (error);
+}
+
+static void	set_philo(t_philo *philo, size_t i)
+{
+	philo->teo = philo->conf->stt;
+	philo->tee = philo->conf->stt + philo->conf->te;
+	philo->ttd = philo->conf->stt + philo->conf->td;
+	philo->conf = philo->conf;
+	philo->id = i + 1;
+	philo->i = i;
+	philo->ate = 0;
+}
+
+static int	create_philosopher(t_philo *philo, t_pid_list **pids)
+{
+	pid_t	pid;
+	int		error;
+	int		tmp_error;
+
+	pid = fork();
+	if (pid > 0)
+	{
+		error = 0;
+		push_pid(pids, pid);
+	}
+	else if (pid == 0)
+	{
+		tmp_error = 0;
+		destroy_pid_list(pids);
+		error = philosopher(philo);
+		sem_close(philo->s);
+		destroy_logger(0);
+		if (tmp_error && !error)
+			error = tmp_error;
+		exit(error);
+	}
+	else
+		error = (errno == EAGAIN) * PHILOSOPHER_ERR_PROC_LIM
+			+ (errno != EAGAIN) * PHILOSOPHER_ERR_PROC_MEM;
+	return (error);
+}
+
+static int	wait_philosophers(t_pid_list **pids, int *error)
+{
+	pid_t	pid;
+	int		status;
+
+	if (!*error)
+	{
+		pid = 0;
+		while (pid != -1 && *pids)
+		{
+			pid = waitpid(-1, &status, 0);
+			if (pid > 0)
+			{
+				remove_pid(pids, pid);
+				if (WIFEXITED(status))
+					*error = WEXITSTATUS(status);
+			}
+		}
+	}
+	while (*pids)
+	{
+		kill(pids[0]->pid, SIGKILL);
+		waitpid(pids[0]->pid, &status, 0);
+		pop_pid(pids);
+	}
+	return (*error);
 }

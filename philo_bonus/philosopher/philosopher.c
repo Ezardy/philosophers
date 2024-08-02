@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/26 06:47:02 by zanikin           #+#    #+#             */
-/*   Updated: 2024/07/31 15:54:56 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/08/02 06:17:22 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,9 +26,7 @@ int	init_philosopher_func(int *error)
 	return (*error);
 }
 
-int	dest_philosopher_func(int *error)
+void	dest_philosopher_func(void)
 {
-	if (!*error)
-		*error = philosopher_base(NULL, 2);
-	return (*error);
+	philosopher_base(NULL, 2);
 }

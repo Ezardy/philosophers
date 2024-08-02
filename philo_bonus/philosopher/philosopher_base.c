@@ -6,11 +6,10 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 05:23:53 by zanikin           #+#    #+#             */
-/*   Updated: 2024/07/31 15:53:13 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/08/02 00:07:38 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdlib.h>
 #include <sys/semaphore.h>
 #include <unistd.h>
 #include <sys/time.h>
@@ -18,30 +17,32 @@
 #include "logger/error_codes.h"
 #include "remap/remap.h"
 #include "t_philo.h"
-#include "t_state.h"
 #include "remap/t_sem_init.h"
 
-int			eat(t_philo *philo, size_t t, int *error, t_state *state);
-int			phsleep(t_philo *philo, size_t t, int *error, t_state *state);
-int			think(t_philo *philo, size_t t, int *error, t_state *state);
+int			eat(t_philo *philo, size_t t, int *error, sem_t *ds);
+int			phsleep(t_philo *philo, size_t t, int *error, sem_t *ds);
+int			think(t_philo *philo, size_t t, int *error, sem_t *ds);
 
 static void	step(t_philo *philo);
-static void	logic_odd(t_philo *philo, int *error, t_state *state);
-static void	logic_even(t_philo *philo, int *error, t_state *state);
-static void	set_error(int *err, t_state *state);
+static void	logic_odd(t_philo *philo, int *error, sem_t *ds);
+static void	logic_even(t_philo *philo, int *error, sem_t *ds);
+static void	set_error(int *err, sem_t *ds);
 
 int	philosopher_base(t_philo *philo, int mode)
 {
 	int					err;
-	static t_state		state = {0};
+	static sem_t		*ds;
 	const t_sem_init	sem_init = {"philosophers_global_state", 1};
-	void				(*logic)(t_philo *, int *, t_state *);
+	void				(*logic)(t_philo *, int *, sem_t *);
 
 	err = 0;
 	if (mode == 1)
-		sem_open_r(state.ss, &sem_init, PHILOSOPHER_ERR_BEGIN, &err);
+		sem_open_r(ds, &sem_init, PHILOSOPHER_ERR_BEGIN, &err);
 	else if (mode == 2)
-		sem_close(state.ss);
+	{
+		sem_close(ds);
+		sem_unlink(sem_init.name);
+	}
 	else
 	{
 		if (philo->id % 2)
@@ -50,13 +51,13 @@ int	philosopher_base(t_philo *philo, int mode)
 			logic = logic_even;
 		safe_sleep(philo->teo);
 		while ((!philo->conf->ewf || philo->ate < philo->conf->notepme) && !err)
-			logic(philo, &err, &state);
-		exit(err);
+			logic(philo, &err, ds);
+		sem_close(ds);
 	}
 	return (err);
 }
 
-static void	logic_odd(t_philo *philo, int *err, t_state *state)
+static void	logic_odd(t_philo *philo, int *err, sem_t *ds)
 {
 	size_t	te;
 
@@ -69,14 +70,14 @@ static void	logic_odd(t_philo *philo, int *err, t_state *state)
 		te = philo->teo;
 	else
 		te = philo->tee;
-	think(philo, te, err, state);
-	eat(philo, te, err, state);
-	phsleep(philo, te, err, state);
+	think(philo, te, err, ds);
+	eat(philo, te, err, ds);
+	phsleep(philo, te, err, ds);
 	step(philo);
-	set_error(err, state);
+	set_error(err, ds);
 }
 
-static void	logic_even(t_philo *philo, int *err, t_state *state)
+static void	logic_even(t_philo *philo, int *err, sem_t *ds)
 {
 	size_t	te;
 
@@ -89,29 +90,17 @@ static void	logic_even(t_philo *philo, int *err, t_state *state)
 		te = philo->teo;
 	else
 		te = philo->tee;
-	eat(philo, te, err, state);
-	phsleep(philo, te, err, state);
-	think(philo, te, err, state);
+	eat(philo, te, err, ds);
+	phsleep(philo, te, err, ds);
+	think(philo, te, err, ds);
 	step(philo);
-	set_error(err, state);
+	set_error(err, ds);
 }
 
-static void	set_error(int *err, t_state *state)
+static void	set_error(int *err, sem_t *ds)
 {
-	int	tmp;
-
-	tmp = sem_wait_r(state->ss, PHILOSOPHER_ERR_BEGIN, err);
-	if (state->state)
-		*err = state->state;
-	else
-	{
-		if (tmp)
-			state->state = tmp;
-		else if (*err)
-			state->state = *err;
-	}
-	if (!tmp)
-		sem_post(state->ss);
+	if (!(sem_wait_r(ds, PHILOSOPHER_ERR_BEGIN, err) || *err))
+		sem_post(ds);
 }
 
 static void	step(t_philo *philo)

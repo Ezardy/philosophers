@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/18 06:14:45 by zanikin           #+#    #+#             */
-/*   Updated: 2024/07/31 15:52:46 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/08/02 04:37:07 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,6 @@
 int		sem_open_r(sem_t *s, const t_sem_init *si, int code, int *error);
 int		sem_wait_r(sem_t *s, int code, int *error);
 int		proc_wait(pid_t pid, int *error);
-int		proc_crea(pid_t *pid, int *error);
 size_t	gettime(void);
 void	safe_sleep(size_t t);
 #endif

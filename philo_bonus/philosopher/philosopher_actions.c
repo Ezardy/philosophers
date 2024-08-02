@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/20 08:20:55 by zanikin           #+#    #+#             */
-/*   Updated: 2024/07/31 15:09:45 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/08/02 00:23:01 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,20 +20,24 @@
 #include "logger/logger.h"
 #include "remap/remap.h"
 #include "t_philo.h"
-#include "t_state.h"
 
-static int	die(t_philo *philo, int *error, t_state *state);
+static int	die(t_philo *philo, int *error, sem_t *ds);
 
-int	eat(t_philo *philo, size_t t, int *error, t_state *state)
+int	eat(t_philo *philo, size_t t, int *error, sem_t *ds)
 {
 	if (!(sem_wait_r(philo->s, PHILOSOPHER_ERR_BEGIN, error)
 			|| log_state(philo->conf->stt, philo->id, LOG_TAKE_FORK, error)))
 	{
-		if (sem_wait_r(philo->s, PHILOSOPHER_ERR_BEGIN, error))
-			die(philo, error, state);
+		if (philo->conf->nop == 1)
+		{
+			die(philo, error, ds);
+			sem_post(philo->s);
+		}
 		else
 		{
-			if (!(log_state(philo->conf->stt, philo->id, LOG_TAKE_FORK, error)
+			if (!(sem_wait_r(philo->s, PHILOSOPHER_ERR_BEGIN, error)
+					|| log_state(philo->conf->stt, philo->id, LOG_TAKE_FORK,
+						error)
 					|| log_state(philo->conf->stt, philo->id, LOG_EAT, error)))
 			{
 				usleep(philo->conf->te);
@@ -47,42 +51,35 @@ int	eat(t_philo *philo, size_t t, int *error, t_state *state)
 	return (*error || philo->ate >= philo->conf->notepme);
 }
 
-int	phsleep(t_philo *philo, size_t t, int *error, t_state *state)
+int	phsleep(t_philo *philo, size_t t, int *error, sem_t *ds)
 {
 	if (!log_state(philo->conf->stt, philo->id, LOG_SLEEP, error))
 	{
 		if (t + philo->conf->te + philo->conf->ts < philo->ttd)
 			usleep(philo->conf->ts);
 		else
-			die(philo, error, state);
+			die(philo, error, ds);
 	}
 	return (*error);
 }
 
-int	think(t_philo *philo, size_t t, int *error, t_state *state)
+int	think(t_philo *philo, size_t t, int *error, sem_t *ds)
 {
 	if (!log_state(philo->conf->stt, philo->id, LOG_THINK, error))
 	{
 		if (t < philo->ttd)
 			safe_sleep(t);
 		else
-			die(philo, error, state);
+			die(philo, error, ds);
 	}
 	return (*error);
 }
 
-static int	die(t_philo *philo, int *error, t_state *state)
+static int	die(t_philo *philo, int *error, sem_t *ds)
 {
 	safe_sleep(philo->ttd);
-	if (!sem_wait_r(state->ss, PHILOSOPHER_ERR_BEGIN, error))
-	{
-		if (!(state->state || log_state(philo->conf->stt, philo->id, LOG_DIE,
-					error)))
-		{
-			*error = PHILOSOPHER_DIED;
-			state->state = PHILOSOPHER_DIED;
-		}
-		sem_post(state->ss);
-	}
+	if (!(sem_wait_r(ds, PHILOSOPHER_ERR_BEGIN, error)
+			|| log_state(philo->conf->stt, philo->id, LOG_DIE, error)))
+		*error = PHILOSOPHER_DIED;
 	return (*error);
 }
