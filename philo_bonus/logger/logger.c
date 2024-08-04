@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/17 21:11:30 by zanikin           #+#    #+#             */
-/*   Updated: 2024/08/02 06:16:31 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/08/04 04:03:54 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ static int	log_state_base(size_t start_time, size_t i, int code, int mode)
 
 	error = 0;
 	if (mode == 1)
-		sem_open_r(s, &sem_init, code, &error);
+		sem_open_r(&s, &sem_init, code, &error);
 	else if (mode == 2)
 		sem_close(s);
 	else if (mode == 3)

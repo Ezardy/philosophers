@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 05:23:53 by zanikin           #+#    #+#             */
-/*   Updated: 2024/08/02 00:07:38 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/08/04 04:01:13 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ int	philosopher_base(t_philo *philo, int mode)
 
 	err = 0;
 	if (mode == 1)
-		sem_open_r(ds, &sem_init, PHILOSOPHER_ERR_BEGIN, &err);
+		sem_open_r(&ds, &sem_init, PHILOSOPHER_ERR_BEGIN, &err);
 	else if (mode == 2)
 	{
 		sem_close(ds);

@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/06 01:37:47 by zanikin           #+#    #+#             */
-/*   Updated: 2024/08/02 07:33:26 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/08/04 06:37:44 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ int	awake_philosophers(t_conf *conf)
 
 	error = 0;
 	pids = NULL;
-	if (!(init_philosopher_func(&error) || sem_open_r(philo.s, &sem_init,
+	if (!(init_philosopher_func(&error) || sem_open_r(&philo.s, &sem_init,
 				PHILOSOPHER_ERR_BEGIN, &error)))
 	{
 		conf->stt = gettime() + 500000;
