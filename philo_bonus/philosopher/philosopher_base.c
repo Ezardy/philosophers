@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 05:23:53 by zanikin           #+#    #+#             */
-/*   Updated: 2024/08/04 04:01:13 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/08/04 06:55:45 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,8 @@ static void	logic_even(t_philo *philo, int *err, sem_t *ds)
 
 static void	set_error(int *err, sem_t *ds)
 {
-	if (!(sem_wait_r(ds, PHILOSOPHER_ERR_BEGIN, err) || *err))
+	if (*err != PHILOSOPHER_DIED && (!(sem_wait_r(ds, PHILOSOPHER_ERR_BEGIN,
+					err) || *err)))
 		sem_post(ds);
 }
 
