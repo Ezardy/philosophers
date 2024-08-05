@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/06 01:37:47 by zanikin           #+#    #+#             */
-/*   Updated: 2024/08/04 07:31:27 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/08/04 23:35:07 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,19 +110,17 @@ static int	wait_philosophers(t_pid_list **pids, int *error)
 	pid_t	pid;
 	int		status;
 
-	if (!*error)
+	pid = 0;
+	while (!*error && pid != -1 && *pids)
 	{
-		pid = 0;
-		while (pid != -1 && *pids)
+		pid = waitpid(-1, &status, 0);
+		if (pid == -1 && errno == EINTR)
+			pid = 0;
+		if (pid > 0)
 		{
-			pid = waitpid(-1, &status, 0);
-			pid = pid * (errno != EINTR);
-			if (pid > 0)
-			{
-				remove_pid(pids, pid);
-				if (WIFEXITED(status))
-					*error = WEXITSTATUS(status);
-			}
+			remove_pid(pids, pid);
+			if (WIFEXITED(status))
+				*error = WEXITSTATUS(status);
 		}
 	}
 	while (*pids)
