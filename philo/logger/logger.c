@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/17 21:11:30 by zanikin           #+#    #+#             */
-/*   Updated: 2024/07/26 07:51:51 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/08/05 23:41:51 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,34 +16,34 @@
 
 #include "state_codes.h"
 #include "error_codes.h"
+#include "philosopher/t_philo.h"
 #include "remap/remap.h"
 
-static int			log_state_base(size_t start_time, size_t i, int code,
-						int mode);
+static int			log_state_base(t_philo *philo, int code, int mode);
 static const char	*sel_desk(int code);
 
-int	log_state(size_t start_time, size_t i, int code, int *error)
+int	log_state(t_philo *philo, int code, int *error)
 {
 	if (!*error)
-		*error = log_state_base(start_time, i, code, 0);
+		*error = log_state_base(philo, code, LOG_MODE);
 	return (*error);
 }
 
 int	init_logger(int *error)
 {
 	if (!*error)
-		*error = log_state_base(0, 0, 0, 1);
+		*error = log_state_base(NULL, 0, 1);
 	return (*error);
 }
 
 int	destroy_logger(int *error)
 {
 	if (!*error)
-		*error = log_state_base(0, 0, 0, 2);
+		*error = log_state_base(NULL, 0, 2);
 	return (*error);
 }
 
-static int	log_state_base(size_t start_time, size_t i, int code, int mode)
+static int	log_state_base(t_philo *philo, int code, int mode)
 {
 	int						error;
 	static pthread_mutex_t	m;
@@ -57,8 +57,14 @@ static int	log_state_base(size_t start_time, size_t i, int code, int mode)
 		error = pthread_mutex_lock(&m) != 0 * LOGGER_ERR_MUT_DEAD_LOCK;
 		if (!error)
 		{
-			printf("%li %li %s\n", (gettime() - start_time) / 1000, i,
-				sel_desk(code));
+			printf("%li %li %s", (gettime() - philo->conf->stt) / 1000,
+				philo->id, sel_desk(code));
+			if (mode == 3)
+				printf("; i - %li; tee - %li; teo - %li; ttd - %li", philo->i,
+					(philo->tee - philo->conf->stt) / 1000,
+					(philo->teo - philo->conf->stt) / 1000,
+					(philo->ttd - philo->conf->stt) / 1000);
+			printf("\n");
 			pthread_mutex_unlock(&m);
 		}
 	}

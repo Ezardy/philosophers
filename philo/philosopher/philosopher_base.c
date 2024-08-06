@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 05:23:53 by zanikin           #+#    #+#             */
-/*   Updated: 2024/07/29 07:49:01 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/08/05 23:51:50 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 #include "t_philo.h"
 #include "t_state.h"
 
-int			eat(t_philo *philo, size_t t, int *error, t_state *state);
+int			eat(t_philo *philo, size_t *t, int *error, t_state *state);
 int			phsleep(t_philo *philo, size_t t, int *error, t_state *state);
 int			think(t_philo *philo, size_t t, int *error, t_state *state);
 
@@ -54,40 +54,18 @@ void	*philosopher_base(t_philo *philo, int mode)
 
 static void	logic_odd(t_philo *philo, int *err, t_state *state)
 {
-	size_t	te;
-
-	if ((philo->i == philo->conf->nop - 1) && (philo->i % 2 == 0))
-	{
-		step(philo);
-		te = philo->teo;
-	}
-	else if (philo->i % 2)
-		te = philo->teo;
-	else
-		te = philo->tee;
-	think(philo, te, err, state);
-	eat(philo, te, err, state);
-	phsleep(philo, te, err, state);
+	think(philo, philo->tee, err, state);
+	eat(philo, &philo->tee, err, state);
+	phsleep(philo, philo->tee, err, state);
 	step(philo);
 	set_error(err, state);
 }
 
 static void	logic_even(t_philo *philo, int *err, t_state *state)
 {
-	size_t	te;
-
-	if ((philo->i == philo->conf->nop - 1) && (philo->i % 2 == 0))
-	{
-		step(philo);
-		te = philo->teo;
-	}
-	else if (philo->i % 2)
-		te = philo->teo;
-	else
-		te = philo->tee;
-	eat(philo, te, err, state);
-	phsleep(philo, te, err, state);
-	think(philo, te, err, state);
+	eat(philo, &philo->teo, err, state);
+	phsleep(philo, philo->teo, err, state);
+	think(philo, philo->teo, err, state);
 	step(philo);
 	set_error(err, state);
 }
