@@ -8,8 +8,8 @@ lflags=
 
 all: dirs $(NAME)
 
-sanitizer: cflags+=-g3 -fsanitize=address -fsanitize=undefined -D_GLIBCXX_DEBUG
-sanitizer: lflags+=-g3 -fsanitize=address -fsanitize=undefined -D_GLIBCXX_DEBUG
+sanitizer: cflags+=-g3 -fsanitize=thread -fsanitize=undefined -D_GLIBCXX_DEBUG
+sanitizer: lflags+=-g3 -fsanitize=thread -fsanitize=undefined -D_GLIBCXX_DEBUG
 sanitizer: all
 
 re: fclean all
@@ -64,10 +64,10 @@ remap_obj=$(addprefix $(remap_dir)/, $(addsuffix .o, $(remap_modules)))
 $(remap_dir): | $(BUILD_DIR)
 	mkdir $@
 
-#         ____  __  ____        __    __  ____  ____ 
+#         ____  __  ____        __    __  ____  ____
 #        (  _ \(  )(    \      (  )  (  )/ ___)(_  _)
-#         ) __/ )(  ) D ( ____ / (_/\ )( \___ \  )(  
-#        (__)  (__)(____/(____)\____/(__)(____/ (__) 
+#         ) __/ )(  ) D ( ____ / (_/\ )( \___ \  )(
+#        (__)  (__)(____/(____)\____/(__)(____/ (__)
 
 pid_list_dir=$(BUILD_DIR)/pid_list
 pid_list_modules=pid_list
