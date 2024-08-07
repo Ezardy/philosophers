@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 05:23:53 by zanikin           #+#    #+#             */
-/*   Updated: 2024/08/07 00:12:55 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/08/07 18:06:36 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,9 +30,7 @@ static void	set_error(int *err, t_state *state);
 
 void	*philosopher_base(t_philo *philo, int mode)
 {
-	int				err;
 	static t_state	state = {0};
-	void			(*logic)(t_philo *, int *, t_state *);
 
 	err = 0;
 	if (mode == 1)
@@ -41,12 +39,8 @@ void	*philosopher_base(t_philo *philo, int mode)
 		mut_dest(&state.sm, PHILOSOPHER_ERR_MUT_BUSY, &err);
 	else
 	{
-		if (philo->id % 2)
-			logic = logic_odd;
-		else
-			logic = logic_even;
 		safe_sleep(philo->te[0]);
-		while ((!philo->conf->ewf || philo->ate < philo->conf->notepme) && !err)
+		while ((!philo->conf->ewf || philo->ate < philo->conf->notepme) && !philo->error)
 			logic(philo, &err, &state);
 	}
 	return ((void *)(long)err);

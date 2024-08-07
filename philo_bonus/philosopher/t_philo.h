@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/06 02:21:37 by zanikin           #+#    #+#             */
-/*   Updated: 2024/08/02 00:49:28 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/08/07 17:47:10 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,5 +28,6 @@ typedef struct s_philo
 	size_t			teo;
 	size_t			ttd;
 	size_t			ate;
+	int				error;
 }	t_philo;
 #endif
