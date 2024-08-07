@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/06 01:37:47 by zanikin           #+#    #+#             */
-/*   Updated: 2024/07/28 23:09:59 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/08/06 06:33:52 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,8 +81,9 @@ static int	run_threads_loop(t_philosophers *philos, pthread_t *phs)
 	philos->conf->stt = gettime() + delay;
 	while (!error && i < philos->conf->nop)
 	{
-		philos->philos[i].teo = philos->conf->stt;
-		philos->philos[i].tee = philos->conf->stt + philos->conf->te;
+		philos->philos[i].te[0] = philos->conf->stt;
+		philos->philos[i].te[1] = philos->conf->stt + philos->conf->te;
+		philos->philos[i].tec = philos->philos[i].te + (i % 2 == 0);
 		philos->philos[i].ttd = philos->conf->stt + philos->conf->td;
 		philos->philos[i].conf = philos->conf;
 		philos->philos[i].id = i + 1;

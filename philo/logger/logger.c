@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/17 21:11:30 by zanikin           #+#    #+#             */
-/*   Updated: 2024/08/05 23:41:51 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/08/06 06:54:49 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,9 +60,8 @@ static int	log_state_base(t_philo *philo, int code, int mode)
 			printf("%li %li %s", (gettime() - philo->conf->stt) / 1000,
 				philo->id, sel_desk(code));
 			if (mode == 3)
-				printf("; i - %li; tee - %li; teo - %li; ttd - %li", philo->i,
-					(philo->tee - philo->conf->stt) / 1000,
-					(philo->teo - philo->conf->stt) / 1000,
+				printf("; i - %li; tec - %li; ttd - %li", philo->i,
+					(*philo->tec - philo->conf->stt) / 1000,
 					(philo->ttd - philo->conf->stt) / 1000);
 			printf("\n");
 			pthread_mutex_unlock(&m);

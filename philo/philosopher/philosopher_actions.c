@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/20 08:20:55 by zanikin           #+#    #+#             */
-/*   Updated: 2024/08/05 23:42:13 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/08/06 07:11:39 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,9 +23,9 @@
 #include "t_state.h"
 
 static int	die(t_philo *philo, int *error, t_state *state);
-static void	update_stats(t_philo *philo, size_t *t);
+static void	update_stats(t_philo *philo);
 
-int	eat(t_philo *philo, size_t *t, int *error, t_state *state)
+int	eat(t_philo *philo, int *error, t_state *state)
 {
 	if (!(mut_lock(philo->lm, PHILOSOPHER_ERR_MUT_DL, error)
 			|| log_state(philo, LOG_TAKE_FORK, error)))
@@ -41,8 +41,8 @@ int	eat(t_philo *philo, size_t *t, int *error, t_state *state)
 					|| log_state(philo, LOG_TAKE_FORK, error)
 					|| log_state(philo, LOG_EAT, error)))
 			{
-				update_stats(philo, t);
-				if (philo->ttd > *t + philo->conf->te)
+				update_stats(philo);
+				if (philo->ttd > *philo->tec + philo->conf->te)
 					usleep(philo->conf->te);
 				else
 					die(philo, error, state);
@@ -54,14 +54,15 @@ int	eat(t_philo *philo, size_t *t, int *error, t_state *state)
 	return (*error || philo->ate >= philo->conf->notepme);
 }
 
-static void	update_stats(t_philo *philo, size_t *t)
+static void	update_stats(t_philo *philo)
 {
 	size_t	cur_time;
 
 	cur_time = gettime();
 	philo->ttd = cur_time + philo->conf->td;
-	*t += cur_time - *t;
 	philo->ate += 1;
+	philo->te[1] += cur_time - *philo->tec;
+	philo->te[0] += cur_time - *philo->tec;
 }
 
 int	phsleep(t_philo *philo, size_t t, int *error, t_state *state)
@@ -76,12 +77,12 @@ int	phsleep(t_philo *philo, size_t t, int *error, t_state *state)
 	return (*error);
 }
 
-int	think(t_philo *philo, size_t t, int *error, t_state *state)
+int	think(t_philo *philo, int *error, t_state *state)
 {
 	if (!log_state(philo, LOG_THINK, error))
 	{
-		if (t < philo->ttd)
-			safe_sleep(t);
+		if (*philo->tec < philo->ttd)
+			safe_sleep(*philo->tec);
 		else
 			die(philo, error, state);
 	}
