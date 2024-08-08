@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/20 08:20:55 by zanikin           #+#    #+#             */
-/*   Updated: 2024/08/06 07:11:39 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/08/08 00:51:06 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,36 +22,36 @@
 #include "t_philo.h"
 #include "t_state.h"
 
-static int	die(t_philo *philo, int *error, t_state *state);
+static int	die(t_philo *philo, t_state *state);
 static void	update_stats(t_philo *philo);
 
-int	eat(t_philo *philo, int *error, t_state *state)
+int	eat(t_philo *philo, t_state *state)
 {
-	if (!(mut_lock(philo->lm, PHILOSOPHER_ERR_MUT_DL, error)
-			|| log_state(philo, LOG_TAKE_FORK, error)))
+	if (!(mut_lock(philo->lm, PHILOSOPHER_ERR_MUT_DL, &philo->error)
+			|| log_state(philo, LOG_TAKE_FORK)))
 	{
 		if (philo->lm == philo->rm)
 		{
-			die(philo, error, state);
+			die(philo, state);
 			pthread_mutex_unlock(philo->lm);
 		}
 		else
 		{
-			if (!(mut_lock(philo->rm, PHILOSOPHER_ERR_MUT_DL, error)
-					|| log_state(philo, LOG_TAKE_FORK, error)
-					|| log_state(philo, LOG_EAT, error)))
+			if (!(mut_lock(philo->rm, PHILOSOPHER_ERR_MUT_DL, &philo->error)
+					|| log_state(philo, LOG_TAKE_FORK)
+					|| log_state(philo, LOG_EAT)))
 			{
 				update_stats(philo);
 				if (philo->ttd > *philo->tec + philo->conf->te)
 					usleep(philo->conf->te);
 				else
-					die(philo, error, state);
+					die(philo, state);
 				pthread_mutex_unlock(philo->lm);
 				pthread_mutex_unlock(philo->rm);
 			}
 		}
 	}
-	return (*error || philo->ate >= philo->conf->notepme);
+	return (philo->error || philo->ate >= philo->conf->notepme);
 }
 
 static void	update_stats(t_philo *philo)
@@ -65,41 +65,41 @@ static void	update_stats(t_philo *philo)
 	philo->te[0] += cur_time - *philo->tec;
 }
 
-int	phsleep(t_philo *philo, size_t t, int *error, t_state *state)
+int	phsleep(t_philo *philo, size_t t, t_state *state)
 {
-	if (!log_state(philo, LOG_SLEEP, error))
+	if (!log_state(philo, LOG_SLEEP))
 	{
 		if (t + philo->conf->te + philo->conf->ts < philo->ttd)
 			usleep(philo->conf->ts);
 		else
-			die(philo, error, state);
+			die(philo, state);
 	}
-	return (*error);
+	return (philo->error);
 }
 
-int	think(t_philo *philo, int *error, t_state *state)
+int	think(t_philo *philo, t_state *state)
 {
-	if (!log_state(philo, LOG_THINK, error))
+	if (!log_state(philo, LOG_THINK))
 	{
 		if (*philo->tec < philo->ttd)
 			safe_sleep(*philo->tec);
 		else
-			die(philo, error, state);
+			die(philo, state);
 	}
-	return (*error);
+	return (philo->error);
 }
 
-static int	die(t_philo *philo, int *error, t_state *state)
+static int	die(t_philo *philo, t_state *state)
 {
 	safe_sleep(philo->ttd);
-	if (!mut_lock(&state->sm, PHILOSOPHER_ERR_MUT_DL, error))
+	if (!mut_lock(&state->sm, PHILOSOPHER_ERR_MUT_DL, &philo->error))
 	{
-		if (!(state->state || log_state(philo, LOG_DIE, error)))
+		if (!(state->state || log_state(philo, LOG_DIE)))
 		{
-			*error = PHILOSOPHER_DIED;
+			philo->error = PHILOSOPHER_DIED;
 			state->state = PHILOSOPHER_DIED;
 		}
 		pthread_mutex_unlock(&state->sm);
 	}
-	return (*error);
+	return (philo->error);
 }

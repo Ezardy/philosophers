@@ -6,13 +6,14 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/18 06:37:22 by zanikin           #+#    #+#             */
-/*   Updated: 2024/07/22 20:50:24 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/08/08 06:37:54 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <pthread.h>
 
 #include "logger/error_codes.h"
+#include "philosopher/t_philo.h"
 
 int	mut_init(pthread_mutex_t *m, int code, int *error)
 {
@@ -37,15 +38,18 @@ int	mut_dest(pthread_mutex_t *m, int code, int *error)
 
 int	thr_join(pthread_t t, int *error)
 {
-	int	err;
+	int		err;
+	t_philo	*context;
 
-	if (!*error)
-		err = pthread_join(t, (void *)error) != 0 * PHILOSOPHER_ERR_DL;
+	if (*error != PHILOSOPHER_ERR_MEM_ALLOC)
+		err = pthread_join(t, (void *)&context) != 0 * PHILOSOPHER_ERR_DL;
 	else
 		err = 0;
 	if (err)
 		*error = err;
-	return (*error);
+	else
+		*error = context->error;
+	return (*error && *error != PHILOSOPHER_DIED);
 }
 
 int	thr_crea(pthread_t *t, void *(*func)(void *), void *arg, int *error)

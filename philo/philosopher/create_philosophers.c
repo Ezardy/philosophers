@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/06 01:37:47 by zanikin           #+#    #+#             */
-/*   Updated: 2024/08/06 06:33:52 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/08/08 04:40:22 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,9 @@
 #include "config.h"
 #include "t_philo.h"
 
-int			dest_philosopher_func(int *error);
-int			init_philosopher_func(int *error);
-void		*philosopher(void *philo);
+static void	*philosopher(void *philo);
+void		*philosopher_base(t_philo *philo, int mode);
+
 
 static int	run_threads(pthread_t *phs, pthread_mutex_t *fms, t_conf *conf);
 static int	run_threads_loop(t_philosophers *philos, pthread_t *phs);
@@ -35,11 +35,9 @@ int	awake_philosophers(t_conf *conf)
 	fms = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t) * conf->nop);
 	error = (phs == NULL || fms == NULL)
 		* PHILOSOPHER_ERR_MEM_ALLOC;
-	if (!init_philosopher_func(&error))
-	{
-		error = run_threads(phs, fms, conf);
-		dest_philosopher_func(&error);
-	}
+	error = run_threads(phs, fms, conf);
+	if (!error)
+		philosopher_base(NULL, 0);
 	free(fms);
 	free(phs);
 	return (error);
@@ -56,17 +54,19 @@ static int	run_threads(pthread_t *phs, pthread_mutex_t *fms, t_conf *conf)
 	philos.fms = fms;
 	err = (philos.philos == NULL) * PHILOSOPHER_ERR_MEM_ALLOC;
 	i = 0;
-	while (i < conf->nop && !mut_init(fms + i, PHILOSOPHER_ERR_MEM_ALLOC, &err))
+	while (i < philos.conf->nop && !mut_init(fms + i, PHILOSOPHER_ERR_MEM_ALLOC,
+			&err))
 		i = i + 1;
 	if (!err)
 		err = run_threads_loop(&philos, phs);
 	i = 0;
 	while (i < philos.conf->nop && !thr_join(phs[i], &err))
-		i = i + 1;
+		i += 1;
 	free(philos.philos);
 	i = 0;
-	while (i < conf->nop && !mut_dest(fms + i, PHILOSOPHER_ERR_MUT_BUSY, &err))
-		i = i + 1;
+	while (i < philos.conf->nop && !mut_dest(fms + i, PHILOSOPHER_ERR_MUT_BUSY,
+			&err))
+		i += 1;
 	return (err);
 }
 
@@ -95,4 +95,9 @@ static int	run_threads_loop(t_philosophers *philos, pthread_t *phs)
 		i += 1;
 	}
 	return (error);
+}
+
+static void	*philosopher(void *philo)
+{
+	return ((void *)philosopher_base((t_philo *)philo, 1));
 }

@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/06 02:21:37 by zanikin           #+#    #+#             */
-/*   Updated: 2024/08/06 06:31:44 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/08/07 09:36:04 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 # include <pthread.h>
 
 # include "config.h"
+# include "philosopher/t_state.h"
 
 typedef struct s_philo
 {
@@ -28,6 +29,8 @@ typedef struct s_philo
 	size_t			*tec;
 	size_t			ttd;
 	size_t			ate;
+	int				error;
+	void			(*logic)(struct s_philo *, t_state *);
 }	t_philo;
 
 typedef struct s_philosophers

@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/17 21:08:51 by zanikin           #+#    #+#             */
-/*   Updated: 2024/08/07 00:17:25 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/08/08 04:06:46 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@
 # define LOG_DIE 4
 # define LOG_DIE_DESK "died"
 
-# define LOG_RELEASE 0
+# define LOG_RELEASE 1
 # define LOG_DEBUG 3
 # define LOG_MODE LOG_RELEASE
 #endif

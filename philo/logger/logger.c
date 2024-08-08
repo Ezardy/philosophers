@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/17 21:11:30 by zanikin           #+#    #+#             */
-/*   Updated: 2024/08/06 06:54:49 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/08/08 00:48:58 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,40 +22,27 @@
 static int			log_state_base(t_philo *philo, int code, int mode);
 static const char	*sel_desk(int code);
 
-int	log_state(t_philo *philo, int code, int *error)
+int	log_state(t_philo *philo, int code)
 {
-	if (!*error)
-		*error = log_state_base(philo, code, LOG_MODE);
-	return (*error);
+	if (!philo->error)
+		philo->error = log_state_base(philo, code, LOG_MODE);
+	return (philo->error);
 }
 
-int	init_logger(int *error)
+void	destroy_logger(int error)
 {
-	if (!*error)
-		*error = log_state_base(NULL, 0, 1);
-	return (*error);
-}
-
-int	destroy_logger(int *error)
-{
-	if (!*error)
-		*error = log_state_base(NULL, 0, 2);
-	return (*error);
+	if (!error)
+		log_state_base(NULL, 0, 0);
 }
 
 static int	log_state_base(t_philo *philo, int code, int mode)
 {
-	int						error;
-	static pthread_mutex_t	m;
+	static pthread_mutex_t	m = PTHREAD_MUTEX_INITIALIZER;
 
-	if (mode == 1)
-		error = pthread_mutex_init(&m, NULL) != 0 * LOGGER_ERR_MEM_ALLOC;
-	else if (mode == 2)
-		error = pthread_mutex_destroy(&m) != 0 * LOGGER_ERR_MUT_BUSY;
-	else
+	if (mode)
 	{
-		error = pthread_mutex_lock(&m) != 0 * LOGGER_ERR_MUT_DEAD_LOCK;
-		if (!error)
+		philo->error = pthread_mutex_lock(&m) != 0 * LOGGER_ERR_MUT_DEAD_LOCK;
+		if (!philo->error)
 		{
 			printf("%li %li %s", (gettime() - philo->conf->stt) / 1000,
 				philo->id, sel_desk(code));
@@ -67,7 +54,9 @@ static int	log_state_base(t_philo *philo, int code, int mode)
 			pthread_mutex_unlock(&m);
 		}
 	}
-	return (error);
+	else
+		pthread_mutex_destroy(&m);
+	return (philo && philo->error);
 }
 
 static const char	*sel_desk(int code)

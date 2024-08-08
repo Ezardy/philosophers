@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/05 01:04:30 by zanikin           #+#    #+#             */
-/*   Updated: 2024/07/23 23:15:22 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/08/08 00:45:24 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,13 +37,10 @@ int	main(const int argc, const char **argv)
 			error = read_ulong(argv[(i - 6) * 4 + 1],
 					conf.conf_arr.larr + (i - 6));
 	}
-	if (!init_logger(&error))
-	{
-		ms_to_us(&conf.conf);
-		if (conf.conf.nop)
-			error = awake_philosophers(&conf.conf);
-		destroy_logger(&error);
-	}
+	ms_to_us(&conf.conf);
+	if (conf.conf.nop)
+		error = awake_philosophers(&conf.conf);
+	destroy_logger(error);
 	print_error(error);
 	return (error);
 }
