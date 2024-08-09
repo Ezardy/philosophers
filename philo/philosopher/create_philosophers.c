@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/06 01:37:47 by zanikin           #+#    #+#             */
-/*   Updated: 2024/08/08 04:40:22 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/08/09 17:56:17 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,8 @@ int	awake_philosophers(t_conf *conf)
 	fms = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t) * conf->nop);
 	error = (phs == NULL || fms == NULL)
 		* PHILOSOPHER_ERR_MEM_ALLOC;
-	error = run_threads(phs, fms, conf);
+	if (!error)
+		error = run_threads(phs, fms, conf);
 	if (!error)
 		philosopher_base(NULL, 0);
 	free(fms);

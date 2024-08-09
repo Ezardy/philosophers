@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 18:46:36 by zanikin           #+#    #+#             */
-/*   Updated: 2024/08/01 01:14:08 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/08/09 18:02:04 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ int	push_pid(t_pid_list **list, pid_t pid)
 {
 	t_pid_list	*nl;
 
-	nl = (t_pid_list *)malloc(sizeof(t_pid_list));
+	nl = 0;
 	if (nl)
 	{
 		nl->pid = pid;

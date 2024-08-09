@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/06 01:37:47 by zanikin           #+#    #+#             */
-/*   Updated: 2024/08/08 07:23:54 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/08/09 18:01:59 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,8 +86,8 @@ static int	create_philosopher(t_philo *philo, t_pid_list **pids)
 	pid = fork();
 	if (pid > 0)
 	{
-		error = 0;
-		push_pid(pids, pid);
+		error = push_pid(pids, pid);
+		kill(pid, SIGKILL);
 	}
 	else if (pid == 0)
 	{
