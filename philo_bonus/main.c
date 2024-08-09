@@ -6,11 +6,14 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/05 01:04:30 by zanikin           #+#    #+#             */
-/*   Updated: 2024/08/02 06:36:30 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/08/09 05:14:42 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <stdlib.h>
 #include <limits.h>
+#include <unistd.h>
+#include <stdio.h>
 
 #include "logger/error_codes.h"
 #include "logger/logger.h"
@@ -18,6 +21,8 @@
 #include "philosopher/philosopher.h"
 
 static void	ms_to_us(t_conf *conf);
+void		test_leaks(void);
+
 
 int	main(const int argc, const char **argv)
 {
@@ -45,6 +50,7 @@ int	main(const int argc, const char **argv)
 		destroy_logger(1);
 	}
 	print_error(error);
+	//test_leaks();
 	return (error);
 }
 
@@ -53,4 +59,12 @@ static void	ms_to_us(t_conf *conf)
 	conf->td *= 1000;
 	conf->te *= 1000;
 	conf->ts *= 1000;
+}
+
+void	test_leaks(void)
+{
+	static char	buf[50];
+
+	sprintf(buf, "leaks %i", getpid());
+	system(buf);
 }

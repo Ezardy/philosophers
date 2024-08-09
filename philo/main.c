@@ -6,10 +6,11 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/05 01:04:30 by zanikin           #+#    #+#             */
-/*   Updated: 2024/08/08 00:45:24 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/08/09 05:29:26 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <stdlib.h>
 #include <limits.h>
 
 #include "logger/error_codes.h"
@@ -42,6 +43,7 @@ int	main(const int argc, const char **argv)
 		error = awake_philosophers(&conf.conf);
 	destroy_logger(error);
 	print_error(error);
+	system("leaks philo");
 	return (error);
 }
 

@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/06 01:37:47 by zanikin           #+#    #+#             */
-/*   Updated: 2024/08/08 07:23:54 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/08/09 05:16:55 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,8 @@ int			philosopher(void *philo);
 static void	set_philo(t_philo *philo, size_t i);
 static int	create_philosopher(t_philo *philo, t_pid_list **pids);
 static int	wait_philosophers(t_pid_list **pids, int *error);
+
+void		test_leaks(void);
 
 int	awake_philosophers(t_conf *conf)
 {
@@ -98,6 +100,7 @@ static int	create_philosopher(t_philo *philo, t_pid_list **pids)
 		destroy_logger(0);
 		if (tmp_error && !error)
 			error = tmp_error;
+		test_leaks();
 		exit(error);
 	}
 	else
