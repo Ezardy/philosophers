@@ -8,8 +8,8 @@ lflags=
 
 all: dirs $(NAME)
 
-sanitizer: cflags+=-g3 -fsanitize=thread -fsanitize=undefined -D_GLIBCXX_DEBUG
-sanitizer: lflags+=-g3 -fsanitize=thread -fsanitize=undefined -D_GLIBCXX_DEBUG
+sanitizer: cflags+=-g3 -fsanitize=address -fno-sanitize-recover=all -fsanitize=float-divide-by-zero -fsanitize=float-cast-overflow -fno-sanitize=null -fno-sanitize=alignment -fsanitize=undefined -D_GLIBCXX_DEBUG
+sanitizer: lflags+=-g3 -fsanitize=address -fno-sanitize-recover=all -fsanitize=float-divide-by-zero -fsanitize=float-cast-overflow -fno-sanitize=null -fno-sanitize=alignment -fsanitize=undefined -D_GLIBCXX_DEBUG
 sanitizer: all
 
 re: fclean all
