@@ -6,11 +6,12 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 05:23:53 by zanikin           #+#    #+#             */
-/*   Updated: 2024/08/08 04:23:47 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/08/08 23:08:47 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <pthread.h>
+#include <sys/_types/_useconds_t.h>
 #include <unistd.h>
 #include <sys/time.h>
 
@@ -30,12 +31,13 @@ static void	set_error(int *err, t_state *state);
 
 void	*philosopher_base(t_philo *philo, int mode)
 {
-	static t_state	state = {0, PTHREAD_MUTEX_INITIALIZER};
+	static t_state		state = {0, PTHREAD_MUTEX_INITIALIZER};
+	const useconds_t	offset = 2000;
 
 	if (mode)
 	{
 		philo->error = 0;
-		safe_sleep(philo->te[0]);
+		safe_sleep(philo->te[0], offset);
 		if (philo->id % 2)
 			philo->logic = logic_odd;
 		else

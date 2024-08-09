@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/06 01:37:47 by zanikin           #+#    #+#             */
-/*   Updated: 2024/08/04 23:35:07 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/08/08 07:23:54 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,12 +67,13 @@ int	awake_philosophers(t_conf *conf)
 
 static void	set_philo(t_philo *philo, size_t i)
 {
-	philo->teo = philo->conf->stt;
-	philo->tee = philo->conf->stt + philo->conf->te;
+	philo->i = i;
+	philo->id = i + 1;
+	philo->te[0] = philo->conf->stt;
+	philo->te[1] = philo->te[0] + philo->conf->te;
+	philo->tec = philo->te + (philo->id % 2);
 	philo->ttd = philo->conf->stt + philo->conf->td;
 	philo->conf = philo->conf;
-	philo->id = i + 1;
-	philo->i = i;
 	philo->ate = 0;
 }
 

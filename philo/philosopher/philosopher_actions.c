@@ -6,13 +6,12 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/20 08:20:55 by zanikin           #+#    #+#             */
-/*   Updated: 2024/08/08 00:51:06 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/08/08 23:07:35 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <pthread.h>
-#include <sys/_types/_size_t.h>
-#include <sys/time.h>
+#include <sys/_types/_useconds_t.h>
 #include <unistd.h>
 
 #include "logger/state_codes.h"
@@ -43,7 +42,7 @@ int	eat(t_philo *philo, t_state *state)
 			{
 				update_stats(philo);
 				if (philo->ttd > *philo->tec + philo->conf->te)
-					usleep(philo->conf->te);
+					usleep_r(philo->conf->te, 2000);
 				else
 					die(philo, state);
 				pthread_mutex_unlock(philo->lm);
@@ -65,12 +64,14 @@ static void	update_stats(t_philo *philo)
 	philo->te[0] += cur_time - *philo->tec;
 }
 
-int	phsleep(t_philo *philo, size_t t, t_state *state)
+int	phsleep(t_philo *philo, t_state *state)
 {
+	const useconds_t	offset = 2000;
+
 	if (!log_state(philo, LOG_SLEEP))
 	{
-		if (t + philo->conf->te + philo->conf->ts < philo->ttd)
-			usleep(philo->conf->ts);
+		if (*philo->tec + philo->conf->ts < philo->ttd)
+			usleep_r(philo->conf->ts, offset);
 		else
 			die(philo, state);
 	}
@@ -79,10 +80,12 @@ int	phsleep(t_philo *philo, size_t t, t_state *state)
 
 int	think(t_philo *philo, t_state *state)
 {
+	const useconds_t	offset = 2000;
+
 	if (!log_state(philo, LOG_THINK))
 	{
 		if (*philo->tec < philo->ttd)
-			safe_sleep(*philo->tec);
+			safe_sleep(*philo->tec, offset);
 		else
 			die(philo, state);
 	}
@@ -91,7 +94,9 @@ int	think(t_philo *philo, t_state *state)
 
 static int	die(t_philo *philo, t_state *state)
 {
-	safe_sleep(philo->ttd);
+	const useconds_t	offset = 0;
+
+	safe_sleep(philo->ttd, offset);
 	if (!mut_lock(&state->sm, PHILOSOPHER_ERR_MUT_DL, &philo->error))
 	{
 		if (!(state->state || log_state(philo, LOG_DIE)))

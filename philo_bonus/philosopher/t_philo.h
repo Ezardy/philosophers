@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/06 02:21:37 by zanikin           #+#    #+#             */
-/*   Updated: 2024/08/07 17:47:10 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/08/08 07:01:01 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,8 @@ typedef struct s_philo
 	const t_conf	*conf;
 	size_t			i;
 	size_t			id;
-	size_t			tee;
-	size_t			teo;
+	size_t			te[2];
+	size_t			*tec;
 	size_t			ttd;
 	size_t			ate;
 	int				error;

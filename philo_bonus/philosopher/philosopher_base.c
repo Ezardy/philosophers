@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 05:23:53 by zanikin           #+#    #+#             */
-/*   Updated: 2024/08/04 06:55:45 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/08/08 07:04:28 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,9 @@
 #include "t_philo.h"
 #include "remap/t_sem_init.h"
 
-int			eat(t_philo *philo, size_t t, int *error, sem_t *ds);
-int			phsleep(t_philo *philo, size_t t, int *error, sem_t *ds);
-int			think(t_philo *philo, size_t t, int *error, sem_t *ds);
+int			eat(t_philo *philo, int *error, sem_t *ds);
+int			phsleep(t_philo *philo, int *error, sem_t *ds);
+int			think(t_philo *philo, int *error, sem_t *ds);
 
 static void	step(t_philo *philo);
 static void	logic_odd(t_philo *philo, int *error, sem_t *ds);
@@ -49,7 +49,7 @@ int	philosopher_base(t_philo *philo, int mode)
 			logic = logic_odd;
 		else
 			logic = logic_even;
-		safe_sleep(philo->teo);
+		safe_sleep(philo->te[0]);
 		while ((!philo->conf->ewf || philo->ate < philo->conf->notepme) && !err)
 			logic(philo, &err, ds);
 		sem_close(ds);
@@ -59,41 +59,44 @@ int	philosopher_base(t_philo *philo, int mode)
 
 static void	logic_odd(t_philo *philo, int *err, sem_t *ds)
 {
-	size_t	te;
-
 	if ((philo->i == philo->conf->nop - 1) && (philo->i % 2 == 0))
 	{
-		step(philo);
-		te = philo->teo;
+		philo->i = (philo->i + 1) % philo->conf->nop;
+		if (philo->tec == philo->te)
+			philo->tec = philo->te + 1;
+		else
+		{
+			step(philo);
+			philo->tec = philo->te;
+		}
 	}
-	else if (philo->i % 2)
-		te = philo->teo;
-	else
-		te = philo->tee;
-	think(philo, te, err, ds);
-	eat(philo, te, err, ds);
-	phsleep(philo, te, err, ds);
+	think(philo, err, ds);
+	eat(philo, err, ds);
+	phsleep(philo, err, ds);
 	step(philo);
+	philo->i = (philo->i + 2) % philo->conf->nop;
 	set_error(err, ds);
 }
 
 static void	logic_even(t_philo *philo, int *err, sem_t *ds)
 {
-	size_t	te;
-
+	eat(philo, err, ds);
+	phsleep(philo, err, ds);
+	step(philo);
+	philo->i = (philo->i + 1) % philo->conf->nop;
 	if ((philo->i == philo->conf->nop - 1) && (philo->i % 2 == 0))
 	{
-		step(philo);
-		te = philo->teo;
+		philo->i = (philo->i + 1) % philo->conf->nop;
+		if (philo->tec == philo->te)
+			philo->tec = philo->te + 1;
+		else
+		{
+			step(philo);
+			philo->tec = philo->te;
+		}
 	}
-	else if (philo->i % 2)
-		te = philo->teo;
-	else
-		te = philo->tee;
-	eat(philo, te, err, ds);
-	phsleep(philo, te, err, ds);
-	think(philo, te, err, ds);
-	step(philo);
+	think(philo, err, ds);
+	philo->i = (philo->i + 1) % philo->conf->nop;
 	set_error(err, ds);
 }
 
@@ -108,11 +111,10 @@ static void	step(t_philo *philo)
 {
 	size_t	rem;
 
-	if (philo->tee - philo->teo + philo->conf->te > philo->conf->ts)
-		rem = philo->tee + philo->conf->te - philo->teo - philo->conf->ts;
+	if (philo->te[1] - philo->te[0] + philo->conf->te > philo->conf->ts)
+		rem = philo->te[1] + philo->conf->te - philo->te[0] - philo->conf->ts;
 	else
 		rem = 0;
-	philo->teo = philo->teo + philo->conf->ts + rem;
-	philo->tee = philo->teo + philo->conf->te;
-	philo->i = (philo->i + 1) % philo->conf->nop;
+	philo->te[0] = philo->te[0] + philo->conf->ts + rem;
+	philo->te[1] = philo->te[0] + philo->conf->te;
 }
