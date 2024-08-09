@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/06 01:37:47 by zanikin           #+#    #+#             */
-/*   Updated: 2024/08/09 17:56:17 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/08/09 18:06:31 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,6 @@
 
 static void	*philosopher(void *philo);
 void		*philosopher_base(t_philo *philo, int mode);
-
 
 static int	run_threads(pthread_t *phs, pthread_mutex_t *fms, t_conf *conf);
 static int	run_threads_loop(t_philosophers *philos, pthread_t *phs);
